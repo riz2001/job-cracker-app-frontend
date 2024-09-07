@@ -1,8 +1,9 @@
-import axios from 'axios';
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 import styled, { createGlobalStyle } from 'styled-components';
 
+// Global Styles
 const GlobalStyle = createGlobalStyle`
   body {
     margin: 0;
@@ -66,6 +67,14 @@ const Button = styled.button`
   }
 `;
 
+const SecondaryButton = styled(Button)`
+  background-color: #28a745;
+
+  &:hover {
+    background-color: #218838;
+  }
+`;
+
 const Usignin = () => {
   const navigate = useNavigate();
   const [input, setInput] = useState({ email: '', password: '' });
@@ -77,8 +86,8 @@ const Usignin = () => {
   const handleSubmit = (event) => {
     event.preventDefault(); // Prevent default form submission behavior
 
-    axios.post("http://localhost:3030/signin", input).then(
-      (response) => {
+    axios.post("http://localhost:3030/signin", input)
+      .then(response => {
         if (response.data.status === "incorrect password") {
           alert("Incorrect password");
         } else if (response.data.status === "invalid email id") {
@@ -86,18 +95,14 @@ const Usignin = () => {
         } else {
           let token = response.data.token;
           let userid = response.data.userid;
-          console.log(userid);
-          console.log(token);
           sessionStorage.setItem("userId", userid);
           sessionStorage.setItem("token", token);
-          navigate("/");
+          navigate("/ViewJobs"); // Navigate to the ViewJobs page
         }
-      }
-    ).catch(
-      (error) => {
-        console.log(error);
-      }
-    );
+      })
+      .catch(error => {
+        console.error(error);
+      });
   };
 
   return (
@@ -124,6 +129,7 @@ const Usignin = () => {
               required
             />
             <Button type="submit">Sign In</Button>
+            <SecondaryButton onClick={() => navigate('/Ureg')}>Sign Up</SecondaryButton>
           </form>
         </FormWrapper>
       </FormContainer>
