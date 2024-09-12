@@ -1,6 +1,8 @@
 import axios from 'axios';
 import React, { useState } from 'react';
 import styled, { createGlobalStyle } from 'styled-components';
+import Usernavbar from './Usernavbar';
+import { Navigate, useNavigate } from 'react-router-dom';
 
 // Global Styles
 const GlobalStyle = createGlobalStyle`
@@ -49,6 +51,8 @@ const Input = styled.input`
   font-size: 1rem;
 `;
 
+
+
 const Button = styled.button`
   width: 100%;
   padding: 0.75rem;
@@ -66,8 +70,18 @@ const Button = styled.button`
   }
 `;
 
+const SecondarButton = styled(Button)`
+  background-color: #28a745;
+
+  &:hover {
+    background-color: #218838;
+  }
+`;
+
 // Ureg Component
 const Ureg = () => {
+  const navigate = useNavigate(); 
+  const navigate1 = useNavigate(); 
   const [input, setInput] = new useState({
     "name": "",
     "admissionno": "",
@@ -135,7 +149,8 @@ const Ureg = () => {
 
 
   return (
-    <>
+    <div>
+      <Usernavbar/>
       <GlobalStyle />
       <FormContainer>
         <FormWrapper>
@@ -191,10 +206,11 @@ const Ureg = () => {
               required
               autoComplete="new-password" />
             <Button onClick={readvalue} >Sign Up</Button>
+            <SecondarButton onClick={() => navigate1('/')}>BACK TO SIGNIN</SecondarButton>
           </form>
         </FormWrapper>
       </FormContainer>
-    </>
+    </div>
   );
 };
 

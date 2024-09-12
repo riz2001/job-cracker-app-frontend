@@ -10,17 +10,24 @@ import AdminSignIn from './Components/AdminSignIn';
 import AddJob from './Components/AddJob';
 import ViewJobs from './Components/ViewJobs';
 import ViewRegistrations from './Components/ViewRegistrations';
+import AdminRoomhome from './Components/AdminRoomhome';
+import Adminroom from './Components/Adminroom';
 
 
 function App() {
   return (
     <BrowserRouter>
     <Routes>
-      <Route path='/' element={<LandingPage />}/>
+    <Route path='/' element={<Usignin />}/>
+      <Route path='/roomhome' element={<Roomhome />}/>
+      <Route path='/adminroomhome' element={<AdminRoomhome />}/>
       <Route path='/room/:roomid' element={<Room />}/>
       <Route path='/room/:roomid' element={<Room />}/>
+
+      <Route path='/Adminroom/:roomid' element={<Adminroom />}/>
+      <Route path='/Adminroom/:roomid' element={<Adminroom />}/>
       <Route path='/Ureg' element={<Ureg />}/>
-      <Route path='/Usignin' element={<Usignin />}/>
+   
       <Route path='/AdminSignIn' element={<AdminSignIn />}/>
       <Route path='/AddJob' element={<AddJob />}/>
       <Route path='/ViewJobs' element={<ViewJobs />}/>

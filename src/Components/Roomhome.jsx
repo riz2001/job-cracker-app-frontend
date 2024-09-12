@@ -1,5 +1,6 @@
 import React from 'react'
 import { useNavigate } from 'react-router-dom'
+import Usernavbar1 from './Usernavbar1';
 
 
 const Roomhome = () => {
@@ -9,7 +10,9 @@ const Roomhome = () => {
     }
 
   return (
-    <div>Roomhome
+  
+    <div>
+         <Usernavbar1/>Roomhome
     <button onClick={handleCreateRoom}>Create Room</button>
     </div>
   )

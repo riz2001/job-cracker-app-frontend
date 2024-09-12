@@ -1,9 +1,10 @@
 import React from 'react'
-import { useParams } from 'react-router-dom'
+import Adminnavbar from './Adminnavbar';
+import { useParams } from 'react-router-dom';
 import { ZegoUIKitPrebuilt } from '@zegocloud/zego-uikit-prebuilt';
-import { appId,serverSecret } from "./Config";
-import Usernavbar1 from './Usernavbar1';
-const Room = () => {
+import { appId, serverSecret } from './Config';
+
+const Adminroom = () => {
     const { roomid } = useParams();
     const meeting = (element) => {
     const token= ZegoUIKitPrebuilt.generateKitTokenForTest(appId,serverSecret,roomid,Date.now().toString(),Date.now().toString());
@@ -25,11 +26,9 @@ const Room = () => {
 
 
     };
-
   return (
     <div>
-      
-   <Usernavbar1/>
+        <Adminnavbar/>
     <div ref={meeting} style={{ width: '100vw', height: '100vh' }}>
        
     </div>
@@ -37,4 +36,6 @@ const Room = () => {
   )
 }
 
-export default Room
+
+
+export default Adminroom

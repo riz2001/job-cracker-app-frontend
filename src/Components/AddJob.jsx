@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
+import Usernavbar1 from './Usernavbar1';
+import Adminnavbar from './Adminnavbar';
 
 // Styled Components
 const JobContainer = styled.div`
@@ -89,6 +91,8 @@ const AddJob = () => {
   };
 
   return (
+    <div>
+      <Adminnavbar/>
     <JobContainer>
       <FormWrapper>
         <Title>Add Job</Title>
@@ -130,6 +134,7 @@ const AddJob = () => {
         </form>
       </FormWrapper>
     </JobContainer>
+    </div>
   );
 };
 

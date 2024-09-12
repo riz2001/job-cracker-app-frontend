@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import styled from 'styled-components';
+import Usernavbar1 from './Usernavbar1';
 
 // Styled Components
 const Table = styled.table`
@@ -106,7 +107,8 @@ const ViewJobs = () => {
   };
 
   return (
-    <>
+    <div>
+      <Usernavbar1/>
       {error && <ErrorMessage>{error}</ErrorMessage>}
       <Table>
         <thead>
@@ -137,7 +139,7 @@ const ViewJobs = () => {
           ))}
         </tbody>
       </Table>
-    </>
+    </div>
   );
 };
 

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import styled from 'styled-components';
+import Adminnavbar from './Adminnavbar';
 
 const Container = styled.div`
   padding: 20px;
@@ -48,6 +49,8 @@ const ViewRegistrations = () => {
   }, []);
 
   return (
+    <div>
+      <Adminnavbar/>
     <Container>
       <h2>Registered Users and Their Jobs</h2>
       <Table>
@@ -73,7 +76,9 @@ const ViewRegistrations = () => {
         </tbody>
       </Table>
     </Container>
+    </div>
   );
 };
+
 
 export default ViewRegistrations;
