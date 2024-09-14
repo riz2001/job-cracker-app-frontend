@@ -130,9 +130,9 @@ const ViewJobs = () => {
               <TableData>
                 <RegisterButton 
                   onClick={() => handleRegister(job._id)}
-                  disabled={registeredJobs.has(job._id)}
-                >
-                  {registeredJobs.has(job._id) ? 'Registered' : 'Register'}
+               
+                >REGISTER
+                 
                 </RegisterButton>
               </TableData>
             </tr>

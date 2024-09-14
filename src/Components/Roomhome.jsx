@@ -12,7 +12,9 @@ const Roomhome = () => {
   return (
   
     <div>
-         <Usernavbar1/>Roomhome
+         <Usernavbar1/>
+         <br></br>
+         Roomhome
     <button onClick={handleCreateRoom}>Create Room</button>
     </div>
   )

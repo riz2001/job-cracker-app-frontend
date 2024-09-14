@@ -12,6 +12,9 @@ import ViewJobs from './Components/ViewJobs';
 import ViewRegistrations from './Components/ViewRegistrations';
 import AdminRoomhome from './Components/AdminRoomhome';
 import Adminroom from './Components/Adminroom';
+import Addquestions from './Components/Addquestions';
+import Weekreview from './Components/Weekreview';
+import Quizdisplay from './Components/Quizdisplay';
 
 
 function App() {
@@ -32,6 +35,11 @@ function App() {
       <Route path='/AddJob' element={<AddJob />}/>
       <Route path='/ViewJobs' element={<ViewJobs />}/>
       <Route path='/ViewRegistrations' element={<ViewRegistrations />}/>
+
+        
+   <Route path='/addquestions' element={<Addquestions />}/>
+   <Route path='/weekreview' element={<Weekreview />}/>
+   <Route path='/week/:week' element={<Quizdisplay />}/>
       
     </Routes>
     </BrowserRouter>

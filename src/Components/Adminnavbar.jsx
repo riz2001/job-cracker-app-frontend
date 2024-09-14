@@ -13,6 +13,8 @@ const Adminnavbar = () => {
           <a className="navbar-brand text-light" href="/ViewRegistrations">VIEW REGISTRATION</a>
           <a className="navbar-brand text-light" href="#"></a>
           <a className="navbar-brand text-light" href="/AdminRoomhome">MOCK INTERVIEW</a>
+          <a className="navbar-brand text-light" href="#"></a>
+          <a className="navbar-brand text-light" href="/addquestions">ADD APTITUDE QUESTIONS</a>
      
         </div>
       </div>
