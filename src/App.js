@@ -17,6 +17,8 @@ import Weekreview from './Components/Weekreview';
 import Quizdisplay from './Components/Quizdisplay';
 
 
+
+
 function App() {
   return (
     <BrowserRouter>
@@ -40,6 +42,8 @@ function App() {
    <Route path='/addquestions' element={<Addquestions />}/>
    <Route path='/weekreview' element={<Weekreview />}/>
    <Route path='/week/:week' element={<Quizdisplay />}/>
+
+ 
       
     </Routes>
     </BrowserRouter>
