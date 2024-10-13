@@ -130,7 +130,7 @@ const AddJob = () => {
             required
           />
           <Button type="submit">Add Job</Button>
-          <SecondaryButton onClick={() => navigate('/ViewRegistrations')}>View Registrations</SecondaryButton>
+          <SecondaryButton onClick={() => navigate('/jobs')}>View Registrations</SecondaryButton>
         </form>
       </FormWrapper>
     </JobContainer>

@@ -9,7 +9,7 @@ import LandingPage from './Components/LandingPage';
 import AdminSignIn from './Components/AdminSignIn';
 import AddJob from './Components/AddJob';
 import ViewJobs from './Components/ViewJobs';
-import ViewRegistrations from './Components/ViewRegistrations';
+
 import AdminRoomhome from './Components/AdminRoomhome';
 import Adminroom from './Components/Adminroom';
  import Addquestions from './Components/Addquestions';
@@ -24,6 +24,8 @@ import Weekcompilers from './Components/Weekcompilers';
 import Csubmissiondetails from './Components/Csubmisiondetails';
 import Addoffcampus from './Components/Addoffcampus';
 import Soffcampus from './Components/Soffcampus';
+import JobRegistrations from './Components/Jobregistrations';
+import Joblist from './Components/Joblist';
 
 
 
@@ -45,10 +47,12 @@ function App() {
       <Route path='/AdminSignIn' element={<AdminSignIn />}/>
       <Route path='/AddJob' element={<AddJob />}/>
       <Route path='/ViewJobs' element={<ViewJobs />}/>
-      <Route path='/ViewRegistrations' element={<ViewRegistrations />}/>
+      <Route path="/jobs" element={<Joblist />} />
+      <Route path="/jobs/:jobId/registrations" element={<JobRegistrations />} />
 
       <Route path="/Addoffcampus" element={<Addoffcampus />} />
       <Route path="/Soffcampus" element={<Soffcampus/>} />
+
        
 
         

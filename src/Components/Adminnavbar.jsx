@@ -22,7 +22,7 @@ const Adminnavbar = () => {
               </a>
               <ul className="dropdown-menu" aria-labelledby="dropdownMenuLinkOnCampus">
                 <li><a className="dropdown-item" href="/AddJob">Add Job</a></li>
-                <li><a className="dropdown-item" href="/ViewRegistrations">View Registrations</a></li>
+                <li><a className="dropdown-item" href="/jobs">View Registrations</a></li>
               </ul>
             </div>
 
