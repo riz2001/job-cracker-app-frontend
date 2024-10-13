@@ -93,11 +93,17 @@ const Usignin = () => {
           alert("Incorrect password");
         } else if (response.data.status === "invalid email id") {
           alert("Invalid email ID");
-        } else {
-          let token = response.data.token;
-          let userid = response.data.userid;
-          sessionStorage.setItem("userId", userid);
+        } 
+         else if (response.data.status === "success") {
+          // Extract the token and user details from the response
+          const { token, user } = response.data;
+  
+          // Store token and user details in sessionStorage
           sessionStorage.setItem("token", token);
+          sessionStorage.setItem("userId", user._id);
+           // Log the values to ensure they are stored correctly
+           console.log("Stored UserId:", user._id);
+           console.log("Stored Token:", token);
           navigate("/ViewJobs"); // Navigate to the ViewJobs page
         }
       })

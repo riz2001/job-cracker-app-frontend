@@ -9,9 +9,10 @@ const Usernavbar1 = () => {
           <a className="navbar-brand text-light" href="#"><b>JOB CRACKER</b></a>
           <a className="navbar-brand text-light" href="#"></a>
           <a className="navbar-brand text-light" href="/ViewJobs">VIEW JOBS</a>
+          <a className="navbar-brand text-light" href="/Soffcampus">VIEW OFFCAMPUS</a>
           <a className="navbar-brand text-light" href="Roomhome">MOCK INTERVIEW</a>
           <a className="navbar-brand text-light" href="/weekreview">APTITUDE TEST</a>
-          <a className="navbar-brand text-light" href="#"></a>
+          <a className="navbar-brand text-light" href="Cweeks">CODING TEST</a>
           <a className="navbar-brand text-light" href="#"></a>
           <a className="navbar-brand text-light" href="#"></a>
           <a className="navbar-brand text-light" href="#"></a>
