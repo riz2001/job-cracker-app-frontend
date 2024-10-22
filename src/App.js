@@ -26,6 +26,16 @@ import Addoffcampus from './Components/Addoffcampus';
 import Soffcampus from './Components/Soffcampus';
 import JobRegistrations from './Components/Jobregistrations';
 import Joblist from './Components/Joblist';
+import Approve from './Components/Approve';
+import Qusers from './Components/Qusers';
+import AscoreTable from './Components/Ascoretable';
+import Ucompilers from './Components/Ucompilers';
+import Fourweek from './Components/Fourweek';
+import UsersList from './Components/Userlist';
+import MonthPage from './Components/Monthpage';
+import Usertimeslots from './Components/Usertimeslots';
+import Dashboard from './Components/Dashboard';
+
 
 
 
@@ -43,8 +53,13 @@ function App() {
       <Route path='/Adminroom/:roomid' element={<Adminroom />}/>
       <Route path='/Adminroom/:roomid' element={<Adminroom />}/>
       <Route path='/Ureg' element={<Ureg />}/>
+      <Route path='/approve' element={<Approve />}/>
    
       <Route path='/AdminSignIn' element={<AdminSignIn />}/>
+      <Route path="/dashboard" element={<Dashboard/>} />
+
+
+
       <Route path='/AddJob' element={<AddJob />}/>
       <Route path='/ViewJobs' element={<ViewJobs />}/>
       <Route path="/jobs" element={<Joblist />} />
@@ -53,7 +68,13 @@ function App() {
       <Route path="/Addoffcampus" element={<Addoffcampus />} />
       <Route path="/Soffcampus" element={<Soffcampus/>} />
 
+      <Route path="/userlist" element={<UsersList/>} />
+      <Route path="/monthpage" element={<MonthPage/>} />
+      <Route path="/user/timeslots" element={<Usertimeslots />} />
+
        
+
+
 
         
     <Route path='/addquestions' element={<Addquestions />}/>
@@ -62,6 +83,8 @@ function App() {
 
    <Route path="/weeklist" element={<Aweekslist />} />
    <Route path="/submissions/:week" element={<AweekSubmissions />} />
+   <Route path="/Qusers" element={<Qusers/>} />//users submission
+   <Route path="/scoretable" element={<AscoreTable />} />
 
 
    <Route path="/Codingq" element={<Codingq />} />
@@ -69,8 +92,9 @@ function App() {
    <Route path="/compiler/:week" element={<Compiler />} />
 
    <Route path="/submissionweeks" element={<Weekcompilers/>} />
-
    <Route path="/submissions/week/:week" element={<Csubmissiondetails/>} />
+   <Route path="/Ucompilers" element={<Ucompilers/>} />
+   <Route path="/Fourweek" element={<Fourweek/>} />
 
  
       

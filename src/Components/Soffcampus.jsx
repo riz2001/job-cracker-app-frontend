@@ -8,7 +8,6 @@ const styles = {
     maxWidth: '1200px', // Wider container for more cards
     margin: '20px auto',
     padding: '20px',
-    backgroundColor: '#f0f4f8', // Light background
     borderRadius: '8px',
     boxShadow: '0 4px 20px rgba(0, 0, 0, 0.1)',
   },
@@ -18,7 +17,7 @@ const styles = {
     justifyContent: 'space-between', // Space between cards
   },
   card: {
-    backgroundColor: '#fff',
+    backgroundColor: '#ffffff', // Set card background to white
     borderRadius: '12px',
     padding: '20px',
     margin: '10px',
@@ -29,7 +28,6 @@ const styles = {
     maxWidth: 'calc(30% - 20px)', // Adjusted max width to fit 3 cards
     position: 'relative',
   },
-
   cardHover: {
     transform: 'translateY(-5px)',
     boxShadow: '0 8px 32px rgba(0, 0, 0, 0.3)',
@@ -139,7 +137,7 @@ const Soffcampus = () => {
         <Usernavbar1/>
   
     <div style={styles.container}>
-      <h2 style={{ textAlign: 'center', marginBottom: '20px' }}>Job Submissions</h2>
+      <h2 style={{ textAlign: 'center', marginBottom: '20px' }}><b>OFFCAMPUS JOBS </b></h2>
       {submissions.length > 0 ? (
         <div style={styles.cardContainer}>
           {submissions.map((submission) => (

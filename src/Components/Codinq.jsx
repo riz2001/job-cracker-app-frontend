@@ -13,7 +13,8 @@ const Codingq = () => {
         outputFormat: '',
         testCases: [{ input: '', expectedOutput: '' }],
         difficulty: '',
-        week: ''
+        week: '',
+        dueDate: ''
     });
 
     const [questionSubmitStatus, setQuestionSubmitStatus] = useState(null);
@@ -50,7 +51,8 @@ const Codingq = () => {
                     outputFormat: '',
                     testCases: [{ input: '', expectedOutput: '' }],
                     difficulty: '',
-                    week: ''
+                    week: '',
+                    dueDate: ''
                 });
             })
             .catch(err => {
@@ -63,7 +65,7 @@ const Codingq = () => {
        <div>
         <Adminnavbar/>
         <div className="coding-question-container" style={styles.container}>
-            <h1 className="form-title" style={styles.title}>Submit a Coding Question</h1>
+            <h1 className="form-title" style={styles.title}>ADD QUESTIONS</h1>
             <form className="question-form" onSubmit={submitQuestion}>
                 <input 
                     type="text" 
@@ -144,6 +146,20 @@ const Codingq = () => {
                     style={styles.input}
                 />
 
+                {/* Move the Due Date Field Here as the Last Input */}
+                <div style={styles.dueDateContainer}>
+                    <label style={styles.label}>Due Date:</label>
+                    <input
+                        type="date"
+                        name="dueDate"
+                        placeholder="Due Date"
+                        value={question.dueDate}
+                        onChange={handleQuestionChange}
+                        style={styles.input}
+                        required
+                    />
+                </div>
+
                 <button type="submit" className="submit-button" style={styles.submitButton}>Submit Question</button>
             </form>
 
@@ -152,7 +168,6 @@ const Codingq = () => {
         </div>
     );
 };
-
 
 // Inline styles
 const styles = {
@@ -211,6 +226,16 @@ const styles = {
         textAlign: 'center',
         color: '#28a745', // Green for success
         marginTop: '10px',
+    },
+    dueDateContainer: {
+        display: 'flex',
+        alignItems: 'center',
+        marginBottom: '10px',
+    },
+    label: {
+        marginRight: '10px',
+        fontWeight: 'bold',
+        fontSize: '14px',
     },
 };
 

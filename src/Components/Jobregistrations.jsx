@@ -7,6 +7,7 @@ const JobRegistrations = () => {
   const { jobId } = useParams(); // Get jobId from the URL
   const [registrations, setRegistrations] = useState([]);
   const [error, setError] = useState(null);
+  const [selectedCourseYear, setSelectedCourseYear] = useState('All');
 
   useEffect(() => {
     axios.get(`http://localhost:3030/jobs/${jobId}/registrations`)
@@ -23,41 +24,80 @@ const JobRegistrations = () => {
       });
   }, [jobId]);
 
+  // Get unique course years for the dropdown
+  const courseYears = [...new Set(registrations.map(reg => reg.user_id.courseYear))];
+
+  // Filter and sort registrations based on selected course year and roll number
+  const filteredRegistrations = registrations
+    .filter(reg => selectedCourseYear === 'All' || reg.user_id.courseYear === selectedCourseYear)
+    .sort((a, b) => a.user_id.rollno.localeCompare(b.user_id.rollno));
+
+  // Count of filtered registrations
+  const registrationCount = filteredRegistrations.length;
+
   if (error) {
     return <div style={styles.error}>{error}</div>;
   }
 
-  if (!registrations.length) {
+  if (!filteredRegistrations.length) {
     return <div style={styles.noRegistrations}>No registrations available for this job.</div>;
   }
 
   return (
     <div>
       <Adminnavbar />
-      <div style={styles.registrationsContainer}>
-        <h2 style={styles.title}>Users Registered for Job</h2>
-        <table style={styles.registrationsTable}>
-          <thead>
-            <tr>
-              <th style={styles.th}>Name</th>
-              <th style={styles.th}>Admission Number</th>
-              <th style={styles.th}>Email</th>
-              <th style={styles.th}>Applied At</th> {/* New column for applied time */}
-            </tr>
-          </thead>
-          <tbody>
-            {registrations.map((reg, index) => (
-              <tr key={index} style={{ ...styles.tr, ...(index % 2 === 0 ? styles.trEven : {}) }} 
-                  onMouseEnter={e => e.currentTarget.style.backgroundColor = '#e0f7fa'}
-                  onMouseLeave={e => e.currentTarget.style.backgroundColor = 'white'}>
-                <td style={styles.td}>{reg.user_id.name}</td>
-                <td style={styles.td}>{reg.user_id.admissionno}</td>
-                <td style={styles.td}>{reg.user_id.email}</td>
-                <td style={styles.td}>{new Date(reg.applied_at).toLocaleString()}</td> {/* Format the applied_at timestamp */}
+
+      <div>
+        <div style={styles.registrationsContainer}>
+          <h2 style={styles.title}>Users Registered for Job</h2>
+          
+          {/* Course Year Filter Dropdown */}
+          <div style={styles.filterContainer}>
+            <label style={styles.filterLabel}>Filter by Course Year: </label>
+            <select 
+              value={selectedCourseYear} 
+              onChange={e => setSelectedCourseYear(e.target.value)} 
+              style={styles.filterSelect}
+            >
+              <option value="All">All</option>
+              {courseYears.map((year, index) => (
+                <option key={index} value={year}>{year}</option>
+              ))}
+            </select>
+          </div>
+          
+          {/* Display the count of filtered registrations */}
+          <div style={styles.countDisplay}>
+          Number Of Registrations:{registrationCount}  
+          </div>
+
+          <table style={styles.registrationsTable}>
+            <thead>
+              <tr>
+                <th style={styles.th}>Roll No</th>
+                <th style={styles.th}>Name</th>
+                <th style={styles.th}>Admission Number</th>
+                <th style={styles.th}>Course Year</th>
+                <th style={styles.th}>Email</th>
+                <th style={styles.th}>Applied At</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {filteredRegistrations.map((reg, index) => (
+                <tr key={index} style={{ ...styles.tr, ...(index % 2 === 0 ? styles.trEven : {}) }} 
+                    onMouseEnter={e => e.currentTarget.style.backgroundColor = '#e0f7fa'}
+                    onMouseLeave={e => e.currentTarget.style.backgroundColor = 'white'}>
+                  <td style={styles.td}>{reg.user_id.rollno}</td>
+                  <td style={styles.td}>{reg.user_id.name}</td>
+                  <td style={styles.td}>{reg.user_id.admissionno}</td>
+                  <td style={styles.td}>{reg.user_id.courseYear}</td>
+                  <td style={styles.td}>{reg.user_id.email}</td>
+                  <td style={styles.td}>{new Date(reg.applied_at).toLocaleString()}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   );
@@ -115,6 +155,25 @@ const styles = {
   },
   trEven: {
     backgroundColor: '#f2f2f2',
+  },
+  filterContainer: {
+    display: 'flex',
+    justifyContent: 'flex-start',
+    marginBottom: '15px',
+  },
+  filterLabel: {
+    fontSize: '1rem',
+    marginRight: '10px',
+  },
+  filterSelect: {
+    padding: '5px',
+    fontSize: '1rem',
+  },
+  countDisplay: {
+    textAlign: 'center',
+    fontSize: '1.2rem',
+    color: '#333',
+    margin: '10px 0',
   },
 };
 

@@ -29,23 +29,38 @@ const FormContainer = styled.div`
 
 const FormWrapper = styled.div`
   background: #fff;
-  padding: 2rem;
+  padding: 2.5rem;
   border-radius: 8px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  max-width: 400px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+  max-width: 500px;
   width: 100%;
+  text-align: center;
 `;
 
 const Title = styled.h2`
   margin-bottom: 1rem;
   color: #333;
+`;
+
+const Heading = styled.h1`
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+  color: #007bff;
   text-align: center;
+  font-weight: bold;
+`;
+
+const Image = styled.img`
+  width: 100px;
+  height: 100px;
+  display: block;
+  margin: 0 auto 1.5rem;
 `;
 
 const Input = styled.input`
   width: 100%;
   padding: 0.75rem;
-  margin: 0.5rem 0;
+  margin: 0.75rem 0;
   border: 1px solid #ddd;
   border-radius: 4px;
   font-size: 1rem;
@@ -89,35 +104,44 @@ const Usignin = () => {
 
     axios.post("http://localhost:3030/signin", input)
       .then(response => {
-        if (response.data.status === "incorrect password") {
+        const { status, token, user } = response.data; // Destructure response data
+
+        if (status === "incorrect password") {
           alert("Incorrect password");
-        } else if (response.data.status === "invalid email id") {
+        } else if (status === "invalid email id") {
           alert("Invalid email ID");
-        } 
-         else if (response.data.status === "success") {
-          // Extract the token and user details from the response
-          const { token, user } = response.data;
-  
-          // Store token and user details in sessionStorage
+        } else if (status === "User is not approved by admin") {
+          alert("Your account is not approved by the admin yet. Please wait for approval.");
+        } else if (status === "success") {
           sessionStorage.setItem("token", token);
           sessionStorage.setItem("userId", user._id);
-           // Log the values to ensure they are stored correctly
-           console.log("Stored UserId:", user._id);
-           console.log("Stored Token:", token);
-          navigate("/ViewJobs"); // Navigate to the ViewJobs page
+          sessionStorage.setItem("userName", user.name);
+          sessionStorage.setItem("admissionNo", user.admissionno);
+          sessionStorage.setItem("email", user.email);
+          sessionStorage.setItem("timeSlot", user.timeSlot || "");
+          sessionStorage.setItem("date", user.date || "");
+
+          navigate("/dashboard");
         }
       })
       .catch(error => {
-        console.error(error);
+        console.error("Error during sign-in:", error);
       });
   };
 
   return (
     <div>
-         <Usernavbar />
+      <Usernavbar />
+
       <GlobalStyle />
       <FormContainer>
         <FormWrapper>
+          {/* Job Cracker Heading */}
+          <Heading>JOB CRACKER</Heading>
+
+          {/* Logo Image */}
+          <Image src="https://tse3.mm.bing.net/th?id=OIP.Z9MPb-mr_Soaz3u-MgNjPQHaHa&pid=Api&P=0&h=220" alt="Job Cracker Logo" />
+
           <Title>Sign In</Title>
           <form onSubmit={handleSubmit}>
             <Input
@@ -137,7 +161,7 @@ const Usignin = () => {
               required
             />
             <Button type="submit">Sign In</Button>
-            <SecondaryButton onClick={() => navigate('/Ureg')}>Sign Up</SecondaryButton>
+            <SecondaryButton onClick={() => navigate('/ureg')}>Sign Up</SecondaryButton>
           </form>
         </FormWrapper>
       </FormContainer>

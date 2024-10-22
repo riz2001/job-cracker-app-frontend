@@ -1,8 +1,8 @@
 import axios from 'axios';
 import React, { useState } from 'react';
 import styled, { createGlobalStyle } from 'styled-components';
+import { useNavigate } from 'react-router-dom';
 import Usernavbar from './Usernavbar';
-import { Navigate, useNavigate } from 'react-router-dom';
 
 // Global Styles
 const GlobalStyle = createGlobalStyle`
@@ -29,17 +29,26 @@ const FormContainer = styled.div`
 
 const FormWrapper = styled.div`
   background: #fff;
-  padding: 2rem;
+  padding: 2.5rem;
   border-radius: 8px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  max-width: 400px;
+  max-width: 700px; /* Increased the width */
   width: 100%;
+  text-align: center;
 `;
 
 const Title = styled.h2`
   margin-bottom: 1rem;
   color: #333;
   text-align: center;
+`;
+
+const Heading = styled.h1`
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+  color: #007bff;
+  text-align: center;
+  font-weight: bold;
 `;
 
 const Input = styled.input`
@@ -51,7 +60,14 @@ const Input = styled.input`
   font-size: 1rem;
 `;
 
-
+const Select = styled.select`
+  width: 100%;
+  padding: 0.75rem;
+  margin: 0.5rem 0;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 1rem;
+`;
 
 const Button = styled.button`
   width: 100%;
@@ -78,84 +94,78 @@ const SecondarButton = styled(Button)`
   }
 `;
 
-// Ureg Component
+// Reg Component
 const Ureg = () => {
   const navigate = useNavigate(); 
-  const navigate1 = useNavigate(); 
-  const [input, setInput] = new useState({
-    "name": "",
-    "admissionno": "",
-    "phoneno": "",
-    "email": "",
-    "password": "",
-    "cnfpass": ""
-  })
+  const [input, setInput] = useState({
+    name: "",
+    admissionno: "",
+    phoneno: "",
+    rollno: "",
+    courseYear: "", // Changed from semester to courseYear
+    email: "",
+    password: "",
+    cnfpass: ""
+  });
 
   const inputHandler = (event) => {
-    setInput({ ...input, [event.target.name]: event.target.value })
-  }
+    setInput({ ...input, [event.target.name]: event.target.value });
+  };
 
   const readvalue = () => {
-    if (input.password == input.cnfpass) {
-
+    if (input.password === input.cnfpass) {
       let newinput = {
-        "name": input.name,
-        "admissionno": input.admissionno,
-        "phoneno": input.phoneno,
-        "email": input.email,
-        "password": input.password
-      }
+        name: input.name,
+        admissionno: input.admissionno,
+        phoneno: input.phoneno,
+        rollno: input.rollno,
+        courseYear: input.courseYear, // Include courseYear in the submission
+        email: input.email,
+        password: input.password
+      };
+      
       axios.post("http://localhost:3030/signup", newinput).then(
         (response) => {
-          console.log(response.data)
-          if (response.data.status == "success") {
-            alert("registered successfully")
+          console.log(response.data);
+          if (response.data.status === "success") {
+            alert("Registered successfully");
+            // Reset input fields
             setInput({
-              "name": input.name,
-              "admissionno": input.admissionno,
-              "phoneno": input.phoneno,
-              "email": input.email,
-              "password": input.password
-            })
-
-
-          } else {
-            alert("email id alread exist")
-            setInput({
-              "name": input.name,
-              "admissionno": input.admissionno,
-              "phoneno": input.phoneno,
-              "email": input.email,
-              "password": input.password
-            })
-
+              name: "",
+              admissionno: "",
+              phoneno: "",
+              rollno: "",
+              courseYear: "", // Reset courseYear
+              email: "",
+              password: "",
+              cnfpass: ""
+            });
+          } else if (response.data.status === "email id already exists") {
+            alert("Email ID already exists.");
           }
-
         }
-      ).catch(
-        (error) => {
-          console.log(error)
-        }
-      )
+      ).catch((error) => {
+        console.log(error);
+        alert("An error occurred during registration. Please try again.");
+      });
     } else {
-      alert("password and confirm no match")
+      alert("Password and confirm password do not match");
     }
-  }
-
-
-
-
-
-
+  };
 
   return (
     <div>
-      <Usernavbar/>
+      <Usernavbar />
+      <br></br>
+      <br></br>
       <GlobalStyle />
       <FormContainer>
         <FormWrapper>
+          {/* Job Cracker Heading */}
+          <Heading>JOB CRACKER</Heading>
+
           <Title>Sign Up</Title>
-          <form >
+          <form>
             <Input
               type="text"
               name="name"
@@ -169,6 +179,26 @@ const Ureg = () => {
               name="admissionno"
               placeholder="Admission Number"
               value={input.admissionno}
+              onChange={inputHandler}
+              required
+            />
+            <Select
+              name="courseYear"
+              value={input.courseYear}
+              onChange={inputHandler}
+              required
+            >
+              <option value="">Select Year/Batch</option>
+              <option value="First Year A Batch">First Year A Batch</option>
+              <option value="First Year B Batch">First Year B Batch</option>
+              <option value="Second Year A Batch">Second Year A Batch</option>
+              <option value="Second Year B Batch">Second Year B Batch</option>
+            </Select>
+            <Input
+              type="text"
+              name="rollno"
+              placeholder="Roll Number"
+              value={input.rollno}
               onChange={inputHandler}
               required
             />
@@ -195,7 +225,7 @@ const Ureg = () => {
               value={input.password}
               onChange={inputHandler}
               required
-              autoComplete="new-password" // Added autoComplete attribute
+              autoComplete="new-password"
             />
             <Input
               type="password"
@@ -204,9 +234,10 @@ const Ureg = () => {
               value={input.cnfpass}
               onChange={inputHandler}
               required
-              autoComplete="new-password" />
-            <Button onClick={readvalue} >Sign Up</Button>
-            <SecondarButton onClick={() => navigate1('/')}>BACK TO SIGNIN</SecondarButton>
+              autoComplete="new-password"
+            />
+            <Button onClick={readvalue}>Sign Up</Button>
+            <SecondarButton onClick={() => navigate('/')}>BACK TO SIGNIN</SecondarButton>
           </form>
         </FormWrapper>
       </FormContainer>
