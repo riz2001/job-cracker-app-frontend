@@ -130,6 +130,7 @@ function Compiler() {
             totalTestCases: selectedQuestion.testCases.length,
             testResults: testResult,
             dueDate: selectedQuestion.dueDate,
+            code: code  // Use the code from state instead of selectedQuestion
         };
         try {
             const res = await axios.post('http://localhost:3030/api/compilerSubmissions', submissionData, {
@@ -148,6 +149,7 @@ function Compiler() {
             }
         }
     };
+    
 
     return (
         <div>

@@ -35,6 +35,11 @@ import UsersList from './Components/Userlist';
 import MonthPage from './Components/Monthpage';
 import Usertimeslots from './Components/Usertimeslots';
 import Dashboard from './Components/Dashboard';
+import Aanswer from './Components/Aanswer';
+import Aanswerview from './Components/Aanswerview';
+import Passedtestcass from './Components/Passedtestcass';
+import AddAnswers from './Components/Addanswers';
+import Passeddisplay from './Components/Passeddisplay';
 
 
 
@@ -80,6 +85,9 @@ function App() {
     <Route path='/addquestions' element={<Addquestions />}/>
    <Route path='/weekreview' element={<Weekreview />}/>
    <Route path='/week/:week' element={<Quizdisplay />}/> 
+   <Route path='/aanswer' element={<Aanswer />}/> 
+   <Route path='/aanswerview' element={<Aanswerview />}/> 
+
 
    <Route path="/weeklist" element={<Aweekslist />} />
    <Route path="/submissions/:week" element={<AweekSubmissions />} />
@@ -95,6 +103,9 @@ function App() {
    <Route path="/submissions/week/:week" element={<Csubmissiondetails/>} />
    <Route path="/Ucompilers" element={<Ucompilers/>} />
    <Route path="/Fourweek" element={<Fourweek/>} />
+   <Route path="/pasttestcases" element={<Passedtestcass/>} />
+   <Route path="/addanswers" element={<AddAnswers/>} />
+   <Route path="/passeddisplay" element={<Passeddisplay/>} />
 
  
       

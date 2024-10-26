@@ -4,7 +4,7 @@ import Usernavbar1 from './Usernavbar1';
 import Adminnavbar from './Adminnavbar';
 
 const Addquestions = () => {
-  const [questions, setQuestions] = useState([{ question: '', options: ['', ''], answer: '' }]);
+  const [questions, setQuestions] = useState([{ question: '', options: ['', ''], answer: '', explanation: '' }]);
   const [week, setWeek] = useState('');
   const [dueDate, setDueDate] = useState('');
 
@@ -24,7 +24,7 @@ const Addquestions = () => {
 
   // Add a new question object to the form
   const addQuestion = () => {
-    setQuestions([...questions, { question: '', options: ['', ''], answer: '' }]);
+    setQuestions([...questions, { question: '', options: ['', ''], answer: '', explanation: '' }]);
   };
 
   // Add more options to a question
@@ -58,7 +58,7 @@ const Addquestions = () => {
     try {
       await axios.post('http://localhost:3030/api/questions', updatedQuestions);
       alert('Questions added successfully!');
-      setQuestions([{ question: '', options: ['', ''], answer: '' }]);
+      setQuestions([{ question: '', options: ['', ''], answer: '', explanation: '' }]);
       setWeek('');
       setDueDate('');
     } catch (error) {
@@ -140,6 +140,17 @@ const Addquestions = () => {
                   />
                 </label>
                 <br />
+                <label className="form-label">
+                  Explanation:
+                  <textarea
+                    value={question.explanation}
+                    onChange={(e) => handleQuestionChange(questionIndex, 'explanation', e.target.value)}
+                    required
+                    className="form-input"
+                    rows="3"
+                  />
+                </label>
+                <br />
               </div>
             ))}
 
@@ -155,7 +166,7 @@ const Addquestions = () => {
           width: 80%;
           max-width: 900px;
           margin: 0 auto;
-          background-color: #fff; /* Outer card background color */
+          background-color: #fff;
           border-radius: 10px;
           box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
           padding: 20px;

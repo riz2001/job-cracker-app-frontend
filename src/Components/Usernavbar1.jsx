@@ -68,6 +68,7 @@ const Usernavbar1 = () => {
             <ul className="dropdown-menu" aria-labelledby="dropdownMenuLink">
               <li><a className="dropdown-item" href="/weekreview">APTITUDE TEST</a></li>
               <li><a className="dropdown-item" href="/Qusers">APTITUDE ATTENDANCE</a></li>
+              <li><a className="dropdown-item" href="/aanswerview">SOLUTION</a></li>
             </ul>
           </div>
 
@@ -79,6 +80,7 @@ const Usernavbar1 = () => {
             <ul className="dropdown-menu" aria-labelledby="dropdownMenuLink">
               <li><a className="dropdown-item" href="Cweeks">CODING TEST</a></li>
               <li><a className="dropdown-item" href="/Ucompilers">CODING ATTENDANCE</a></li>
+              <li><a className="dropdown-item" href="/Passeddisplay">SOLUTION</a></li>
             </ul>
           </div>
        <li></li>
