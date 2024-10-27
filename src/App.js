@@ -40,6 +40,8 @@ import Aanswerview from './Components/Aanswerview';
 import Passedtestcass from './Components/Passedtestcass';
 import AddAnswers from './Components/Addanswers';
 import Passeddisplay from './Components/Passeddisplay';
+import Profilepage from './Components/Profilepage';
+import Updation from './Components/Updation';
 
 
 
@@ -59,6 +61,7 @@ function App() {
       <Route path='/Adminroom/:roomid' element={<Adminroom />}/>
       <Route path='/Ureg' element={<Ureg />}/>
       <Route path='/approve' element={<Approve />}/>
+      <Route path="/profilepage" element={<Profilepage/>} />
    
       <Route path='/AdminSignIn' element={<AdminSignIn />}/>
       <Route path="/dashboard" element={<Dashboard/>} />
@@ -69,6 +72,7 @@ function App() {
       <Route path='/ViewJobs' element={<ViewJobs />}/>
       <Route path="/jobs" element={<Joblist />} />
       <Route path="/jobs/:jobId/registrations" element={<JobRegistrations />} />
+      
 
       <Route path="/Addoffcampus" element={<Addoffcampus />} />
       <Route path="/Soffcampus" element={<Soffcampus/>} />
@@ -87,6 +91,7 @@ function App() {
    <Route path='/week/:week' element={<Quizdisplay />}/> 
    <Route path='/aanswer' element={<Aanswer />}/> 
    <Route path='/aanswerview' element={<Aanswerview />}/> 
+   <Route path='/updation' element={<Updation />}/> 
 
 
    <Route path="/weeklist" element={<Aweekslist />} />
@@ -106,6 +111,7 @@ function App() {
    <Route path="/pasttestcases" element={<Passedtestcass/>} />
    <Route path="/addanswers" element={<AddAnswers/>} />
    <Route path="/passeddisplay" element={<Passeddisplay/>} />
+  
 
  
       

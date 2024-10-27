@@ -53,7 +53,7 @@ const Addoffcampus = () => {
         <div style={styles.inputGroup}>
           <label style={styles.label}>Salary</label>
           <input
-            type="number"
+            type="text"
             value={salary}
             onChange={(e) => setSalary(e.target.value)}
             style={styles.input}

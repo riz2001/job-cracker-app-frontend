@@ -11,8 +11,8 @@ const Usernavbar1 = () => {
       paddingTop: '0px',   // Align with other links
       paddingBottom: '0px' // Consistent padding for uniform height
     },
-    signOutButton: {
-      marginLeft: 'auto'   // Push the signout button to the right
+    dropdownItem: {
+      cursor: 'pointer'
     }
   };
 
@@ -36,13 +36,10 @@ const Usernavbar1 = () => {
   return (
     <nav className="navbar bg-dark border-bottom border-body" data-bs-theme="dark">
       <div className="container-fluid">
-        <div className="d-flex justify-content-end align-items-center"> {/* Align items to the end (right) and center vertically */}
+        <div className="d-flex justify-content-end align-items-center">
           <a className="navbar-brand text-light" href="#"><b>JOB CRACKER</b></a>
-          <li></li>
-          <li></li>
           <a className="navbar-brand text-light" href="/dashboard">DASHBOARD</a>
           
-
           {/* VIEW JOBS */}
           <a className="navbar-brand text-light" href="/ViewJobs">VIEW JOBS</a>
 
@@ -55,8 +52,8 @@ const Usernavbar1 = () => {
               INTERVIEW
             </a>
             <ul className="dropdown-menu" aria-labelledby="dropdownMenuLink">
-              <li><a className="dropdown-item" onClick={handleCreateRoom}>MOCK INTERVIEW</a></li>  {/* Call handleCreateRoom when clicked */}
-              <li><a className="dropdown-item" href="/user/timeslots">SLOT BOOKING</a></li>
+              <li><a className="dropdown-item" onClick={handleCreateRoom} style={styles.dropdownItem}>MOCK INTERVIEW</a></li>
+              <li><a className="dropdown-item" href="/user/timeslots" style={styles.dropdownItem}>SLOT BOOKING</a></li>
             </ul>
           </div>
 
@@ -66,9 +63,9 @@ const Usernavbar1 = () => {
               APTITUDE
             </a>
             <ul className="dropdown-menu" aria-labelledby="dropdownMenuLink">
-              <li><a className="dropdown-item" href="/weekreview">APTITUDE TEST</a></li>
-              <li><a className="dropdown-item" href="/Qusers">APTITUDE ATTENDANCE</a></li>
-              <li><a className="dropdown-item" href="/aanswerview">SOLUTION</a></li>
+              <li><a className="dropdown-item" href="/weekreview" style={styles.dropdownItem}>APTITUDE TEST</a></li>
+              <li><a className="dropdown-item" href="/Qusers" style={styles.dropdownItem}>APTITUDE ATTENDANCE</a></li>
+              <li><a className="dropdown-item" href="/aanswerview" style={styles.dropdownItem}>SOLUTION</a></li>
             </ul>
           </div>
 
@@ -78,50 +75,50 @@ const Usernavbar1 = () => {
               CODING
             </a>
             <ul className="dropdown-menu" aria-labelledby="dropdownMenuLink">
-              <li><a className="dropdown-item" href="Cweeks">CODING TEST</a></li>
-              <li><a className="dropdown-item" href="/Ucompilers">CODING ATTENDANCE</a></li>
-              <li><a className="dropdown-item" href="/Passeddisplay">SOLUTION</a></li>
+              <li><a className="dropdown-item" href="Cweeks" style={styles.dropdownItem}>CODING TEST</a></li>
+              <li><a className="dropdown-item" href="/Ucompilers" style={styles.dropdownItem}>CODING ATTENDANCE</a></li>
+              <li><a className="dropdown-item" href="/Passeddisplay" style={styles.dropdownItem}>SOLUTION</a></li>
+             
             </ul>
           </div>
-       <li></li>
-       <li></li>
-       <li></li>
-       <li></li>
-       <li></li>
-       <li></li>
-       <li></li>
-       <li></li>
-       <li></li>
-       <li></li>
-       <li></li>
-       <li></li>
-       <li></li>
-       <li></li>
-       <li></li>
-       <li></li>
-       <li></li>
-       <li></li>
-       <li></li>
-       <li></li>
-      
-       
+          <a className="navbar-brand text-light" href="#"></a>
+          <a className="navbar-brand text-light" href="#"></a>
+          <a className="navbar-brand text-light" href="#"></a>
+          <a className="navbar-brand text-light" href="#"></a>
+          <a className="navbar-brand text-light" href="#"></a>
+          <a className="navbar-brand text-light" href="#"></a>
+          <a className="navbar-brand text-light" href="#"></a>
+          <a className="navbar-brand text-light" href="#"></a>
+          <a className="navbar-brand text-light" href="#"></a>
+          <a className="navbar-brand text-light" href="#"></a>
+          <a className="navbar-brand text-light" href="#"></a>
+          <a className="navbar-brand text-light" href="#"></a>
+          <a className="navbar-brand text-light" href="#"></a>
+          <a className="navbar-brand text-light" href="#"></a>
+          <a className="navbar-brand text-light" href="#"></a>
+          <a className="navbar-brand text-light" href="#"></a>
+          <a className="navbar-brand text-light" href="#"></a>
+          <a className="navbar-brand text-light" href="#"></a>
+          <a className="navbar-brand text-light" href="#"></a>
+          <a className="navbar-brand text-light" href="#"></a>
+          <a className="navbar-brand text-light" href="#"></a>
+          <a className="navbar-brand text-light" href="#"></a>
+          <a className="navbar-brand text-light" href="#"></a>
+          <a className="navbar-brand text-light" href="#"></a>
+          <a className="navbar-brand text-light" href="#"></a>
 
-
-       
-
-          {/* SIGNOUT BUTTON */}
-          <div style={styles.signOutButton}>
-            <button onClick={handleSignOut} className="btn btn-danger">
-              Sign Out
-            </button>
+          {/* PROFILE & SIGNOUT DROPDOWN */}
+          <div className="dropdown">
+            <a className="navbar-brand dropdown-toggle text-light" href="#" role="button" id="profileDropdown" data-bs-toggle="dropdown" aria-expanded="false" style={styles.navItem}>
+    <img src="https://tse2.mm.bing.net/th?id=OIP.bLJZE3pkcemcxyYfrliB4AHaHa&pid=Api&P=0&h=220" width="50" height="40"></img>
+            </a>
+            <ul className="dropdown-menu dropdown-menu-end" aria-labelledby="profileDropdown">
+              <li><a className="dropdown-item" href="/profilepage" style={styles.dropdownItem}>View Profile</a></li>
+              <li><a className="dropdown-item" onClick={handleSignOut} style={styles.dropdownItem}>Sign Out</a></li>
+            </ul>
           </div>
         </div>
-        <div></div>
-        <div></div>
-        <div></div>
-        <div></div>
       </div>
-      
     </nav>
   );
 };

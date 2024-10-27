@@ -122,7 +122,7 @@ const AddJob = () => {
             required
           />
           <Input
-            type="number"
+            type="text"
             name="salary"
             placeholder="Salary"
             onChange={inputHandler}

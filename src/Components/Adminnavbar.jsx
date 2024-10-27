@@ -26,8 +26,25 @@ const Adminnavbar = () => { // Correct the component declaration
           <div className="d-flex justify-content-end align-items-center"> {/* Align items vertically */}
             <a className="navbar-brand text-light" href="#"><b>JOB CRACKER</b></a>
 
-            {/* APPROVE USERS Section */}
-            <a className="navbar-brand text-light mx-3" href="/approve">APPROVE USERS</a>
+
+            <div className="dropdown d-flex align-items-center mx-3"> {/* Adds space and flex properties */}
+              <a
+                className="navbar-brand text-light dropdown-toggle"
+                href="#"
+                role="button"
+                id="dropdownMenuLinkOnCampus"
+                data-bs-toggle="dropdown"
+                aria-expanded="false"
+              >
+                USER MANAGEMENT
+              </a>
+              <ul className="dropdown-menu" aria-labelledby="dropdownMenuLinkOnCampus">
+                <li><a className="dropdown-item" href="/approve">Approve Users</a></li>
+                <li><a className="dropdown-item" href="/updation">Updation</a></li>
+              </ul>
+            </div>
+
+         
 
             {/* ON CAMPUS Section */}
             <div className="dropdown d-flex align-items-center mx-3"> {/* Adds space and flex properties */}
