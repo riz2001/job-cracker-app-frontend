@@ -108,6 +108,7 @@ const Adminnavbar = () => { // Correct the component declaration
               </a>
               <ul className="dropdown-menu" aria-labelledby="dropdownMenuLinkAptitude">
                 <li><a className="dropdown-item" href="/addquestions">Add Aptitude Questions</a></li>
+                <li><a className="dropdown-item" href="/updatequestions">Update</a></li>
                 <li><a className="dropdown-item" href="/weeklist">Aptitude Attendance</a></li>
                 <li><a className="dropdown-item" href="/aanswer">Add Solutions</a></li>
                 <li><a className="dropdown-item" href="/scoretable">Result</a></li>
@@ -128,6 +129,7 @@ const Adminnavbar = () => { // Correct the component declaration
               </a>
               <ul className="dropdown-menu" aria-labelledby="dropdownMenuLinkCoding">
                 <li><a className="dropdown-item" href="/Codingq">Add Coding Questions</a></li>
+                <li><a className="dropdown-item" href="Codingupdate">Updation</a></li>
                 <li><a className="dropdown-item" href="/submissionweeks">Coding Attendance</a></li>
                 <li><a className="dropdown-item" href="/pasttestcases">Add Solutions</a></li>
                 <li><a className="dropdown-item" href="/Fourweek">Result</a></li>

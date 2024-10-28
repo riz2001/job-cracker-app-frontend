@@ -13,7 +13,9 @@ const JobRegistrations = () => {
     axios.get(`http://localhost:3030/jobs/${jobId}/registrations`)
       .then(response => {
         if (response.data.status === 'success') {
-          setRegistrations(response.data.registrations);
+          // Filter out any registrations with a null or missing user_id
+          const validRegistrations = response.data.registrations.filter(reg => reg.user_id);
+          setRegistrations(validRegistrations);
         } else {
           setError('Error fetching registrations');
         }
@@ -24,12 +26,16 @@ const JobRegistrations = () => {
       });
   }, [jobId]);
 
-  // Get unique course years for the dropdown
-  const courseYears = [...new Set(registrations.map(reg => reg.user_id.courseYear))];
+  // Get unique course years for the dropdown from valid registrations
+  const courseYears = [
+    ...new Set(registrations.map(reg => reg.user_id && reg.user_id.courseYear).filter(Boolean))
+  ];
 
   // Filter and sort registrations based on selected course year and roll number
   const filteredRegistrations = registrations
-    .filter(reg => selectedCourseYear === 'All' || reg.user_id.courseYear === selectedCourseYear)
+    .filter(reg => 
+      (selectedCourseYear === 'All' || (reg.user_id && reg.user_id.courseYear === selectedCourseYear))
+    )
     .sort((a, b) => a.user_id.rollno.localeCompare(b.user_id.rollno));
 
   // Count of filtered registrations
@@ -68,7 +74,7 @@ const JobRegistrations = () => {
           
           {/* Display the count of filtered registrations */}
           <div style={styles.countDisplay}>
-          Number Of Registrations:{registrationCount}  
+            Number Of Registrations: {registrationCount}
           </div>
 
           <table style={styles.registrationsTable}>

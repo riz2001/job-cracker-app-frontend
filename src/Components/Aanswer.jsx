@@ -1,3 +1,4 @@
+// src/components/Aanswer.js
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import Adminnavbar from './Adminnavbar';
@@ -20,7 +21,7 @@ const Aanswer = () => {
   const fetchQuestions = async (selectedWeek) => {
     try {
       const response = await axios.get(`http://localhost:3030/api/filter-questions/${selectedWeek}`);
-      console.log('Fetched questions:', response.data); // Log fetched questions
+      console.log('Fetched questions:', response.data);
       setQuestions(response.data);
     } catch (error) {
       console.error('Error fetching questions:', error);
@@ -39,9 +40,8 @@ const Aanswer = () => {
 
   const handleSubmit = async () => {
     const userAnswers = questions.map(question => ({
-      questionId: question._id, // Include question ID
+      questionId: question._id,
       week: Number(week),
-    
       answer: question.answer,
       explanation: question.explanation,
       submittedAt: new Date(),
@@ -56,6 +56,7 @@ const Aanswer = () => {
       alert('Error submitting answers.');
     }
   };
+
   useEffect(() => {
     fetchAvailableWeeks();
   }, []);
@@ -63,59 +64,108 @@ const Aanswer = () => {
   return (
     <div>
       <Adminnavbar/>
-      <h2>Select Week to View Questions and Correct Answers</h2>
+      <div className="answer-container">
+        <h2 className="header"><b>SUBMIT SOLUTIONS</b></h2>
 
-      <label>
-        Week:
-        <select value={week} onChange={handleWeekChange} required>
-          <option value="" disabled>Select a week</option>
-          {weeks.map((availableWeek, index) => (
-            <option key={index} value={availableWeek}>
-              Week {availableWeek}
-            </option>
-          ))}
-        </select>
-      </label>
+        <label htmlFor="weekSelect">
+          Week:
+          <select id="weekSelect" value={week} onChange={handleWeekChange} required>
+            <option value="" disabled>Select a week</option>
+            {weeks.map((availableWeek, index) => (
+              <option key={index} value={availableWeek}>
+                Week {availableWeek}
+              </option>
+            ))}
+          </select>
+        </label>
 
-      <button onClick={handleSubmit} disabled={!week || submitted}>
-        Submit Answers
-      </button>
+        <button className="submit-button" onClick={handleSubmit} disabled={!week || submitted}>
+          Submit Answers
+        </button>
 
-      <div className="questions-container">
-        {questions.length > 0 ? (
-          questions.map((question, index) => (
-            <div key={question._id} className="question-card">
-              <h3>Question {index + 1}: {question.questionText}</h3>
-              <div>
-                <strong>Correct Answer:</strong> {question.answer}
-              </div>
-              {question.explanation && (
+        <div className="questions-container">
+          {questions.length > 0 ? (
+            questions.map((question, index) => (
+              <div key={question._id} className="question-card">
+                <h3>Question {index + 1}: {question.question}</h3>
                 <div>
-                  <strong>Explanation:</strong> {question.explanation}
+                  <strong>Correct Answer:</strong> {question.answer}
                 </div>
-              )}
-            </div>
-          ))
-        ) : (
-          <p>No questions found for this week.</p>
-        )}
-      </div>
+                {question.explanation && (
+                  <div>
+                    <strong>Explanation:</strong> {question.explanation}
+                  </div>
+                )}
+              </div>
+            ))
+          ) : (
+            <p>No questions found for this week.</p>
+          )}
+        </div>
 
-      <style jsx>{`
-        .questions-container {
-          margin-top: 20px;
-        }
-        .question-card {
-          background-color: #f9f9f9;
-          border: 1px solid #ddd;
-          padding: 15px;
-          margin-bottom: 10px;
-          border-radius: 8px;
-        }
-        h3 {
-          margin-bottom: 10px;
-        }
-      `}</style>
+        <style jsx>{`
+          .answer-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 30px;
+            background-color: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+          }
+
+          .header {
+            text-align: center;
+            color: #4CAF50;
+            margin-bottom: 20px;
+            font-size: 28px;
+          }
+
+          label {
+            font-weight: bold;
+            margin-right: 10px;
+          }
+
+          select {
+            padding: 10px;
+            margin-bottom: 20px;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+            font-size: 16px;
+          }
+
+          .submit-button {
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-bottom: 20px;
+          }
+
+          .submit-button:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+          }
+
+          .questions-container {
+            margin-top: 20px;
+          }
+
+          .question-card {
+            background-color: #f9f9f9;
+            border: 1px solid #ddd;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 8px;
+          }
+
+          h3 {
+            margin-bottom: 10px;
+          }
+        `}</style>
+      </div>
     </div>
   );
 };

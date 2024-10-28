@@ -32,7 +32,7 @@ const FormWrapper = styled.div`
   padding: 2.5rem;
   border-radius: 8px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  max-width: 700px; /* Increased the width */
+  max-width: 700px;
   width: 100%;
   text-align: center;
 `;
@@ -86,7 +86,7 @@ const Button = styled.button`
   }
 `;
 
-const SecondarButton = styled(Button)`
+const SecondaryButton = styled(Button)`
   background-color: #28a745;
 
   &:hover {
@@ -94,15 +94,14 @@ const SecondarButton = styled(Button)`
   }
 `;
 
-// Reg Component
 const Ureg = () => {
-  const navigate = useNavigate(); 
+  const navigate = useNavigate();
   const [input, setInput] = useState({
     name: "",
     admissionno: "",
     phoneno: "",
     rollno: "",
-    courseYear: "", // Changed from semester to courseYear
+    courseYear: "",
     email: "",
     password: "",
     cnfpass: ""
@@ -112,30 +111,66 @@ const Ureg = () => {
     setInput({ ...input, [event.target.name]: event.target.value });
   };
 
-  const readvalue = () => {
-    if (input.password === input.cnfpass) {
-      let newinput = {
+  const validateInputs = () => {
+    const phoneRegex = /^\d{10}$/;
+    const admissionRegex = /^[A-Za-z0-9]{7}$/;  // Allows exactly 7 alphanumeric characters
+    const rollRegex = /^\d{1,3}$/;
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    if (!input.name.trim()) {
+      alert("Please enter your name.");
+      return false;
+    }
+    if (!admissionRegex.test(input.admissionno)) {
+      alert("Admission number must be 7 characters.");
+      return false;
+    }
+    if (!phoneRegex.test(input.phoneno)) {
+      alert("Phone number must be 10 digits.");
+      return false;
+    }
+    if (!rollRegex.test(input.rollno)) {
+      alert("inefficient roll no.");
+      return false;
+    }
+    if (!emailRegex.test(input.email)) {
+      alert("Please enter a valid email.");
+      return false;
+    }
+    if (input.password.length < 8) {
+      alert("Password must be at least 8 characters.");
+      return false;
+    }
+    if (input.password !== input.cnfpass) {
+      alert("Passwords do not match.");
+      return false;
+    }
+    return true;
+  };
+
+  const readValue = () => {
+    if (validateInputs()) {
+      const newInput = {
         name: input.name,
         admissionno: input.admissionno,
         phoneno: input.phoneno,
         rollno: input.rollno,
-        courseYear: input.courseYear, // Include courseYear in the submission
+        courseYear: input.courseYear,
         email: input.email,
         password: input.password
       };
-      
-      axios.post("http://localhost:3030/signup", newinput).then(
-        (response) => {
+
+      axios.post("http://localhost:3030/signup", newInput)
+        .then((response) => {
           console.log(response.data);
           if (response.data.status === "success") {
             alert("Registered successfully");
-            // Reset input fields
             setInput({
               name: "",
               admissionno: "",
               phoneno: "",
               rollno: "",
-              courseYear: "", // Reset courseYear
+              courseYear: "",
               email: "",
               password: "",
               cnfpass: ""
@@ -143,27 +178,23 @@ const Ureg = () => {
           } else if (response.data.status === "email id already exists") {
             alert("Email ID already exists.");
           }
-        }
-      ).catch((error) => {
-        console.log(error);
-        alert("An error occurred during registration. Please try again.");
-      });
-    } else {
-      alert("Password and confirm password do not match");
+        })
+        .catch((error) => {
+          console.log(error);
+          alert("An error occurred during registration. Please try again.");
+        });
     }
   };
 
   return (
     <div>
       <Usernavbar />
-      <br></br>
-      <br></br>
+      <br />
+      <br />
       <GlobalStyle />
       <FormContainer>
         <FormWrapper>
-          {/* Job Cracker Heading */}
           <Heading>JOB CRACKER</Heading>
-
           <Title>Sign Up</Title>
           <form>
             <Input
@@ -236,8 +267,8 @@ const Ureg = () => {
               required
               autoComplete="new-password"
             />
-            <Button onClick={readvalue}>Sign Up</Button>
-            <SecondarButton onClick={() => navigate('/')}>BACK TO SIGNIN</SecondarButton>
+            <Button type="button" onClick={readValue}>Sign Up</Button>
+            <SecondaryButton type="button" onClick={() => navigate('/')}>BACK TO SIGNIN</SecondaryButton>
           </form>
         </FormWrapper>
       </FormContainer>

@@ -34,37 +34,50 @@ const Qusers = () => {
   const styles = {
     container: {
       display: 'flex',
+      width:'1300px',
       justifyContent: 'center', // Center the table horizontally
       alignItems: 'center',
       flexDirection: 'column',
       margin: '20px auto', // Center the entire container
+      backgroundColor: '#ffffff', // White background for content area
+      padding: '20px',
+      borderRadius: '10px', // Rounded corners for container
+      boxShadow: '0 0 15px rgba(0, 0, 0, 0.1)', // Subtle shadow for the container
+    },
+    heading: {
+      color: '#333333',
+      fontSize: '24px',
+      marginBottom: '20px',
     },
     table: {
-      width: '80%', // Adjust width of the table
+      width: '100%', // Full width of the container
       borderCollapse: 'collapse',
       marginTop: '20px',
-      borderSpacing: '10px', // Increase space between columns
     },
     th: {
       border: '1px solid #ddd',
-      padding: '10px', // Increase padding for header cells
+      padding: '12px', // Adjusted padding for header cells
       textAlign: 'left',
       backgroundColor: '#007bff', // Blue background for the heading
       color: 'white', // White text color for the heading
+      fontSize: '16px',
     },
     td: {
       border: '1px solid #ddd',
-      padding: '10px', // Increase padding for data cells
+      padding: '10px', // Adjusted padding for data cells
       textAlign: 'left',
+      fontSize: '14px',
     },
     evenRow: {
-      backgroundColor: '#f2f2f2', // Light gray for even rows
+      backgroundColor: '#f9f9f9', // Slightly lighter gray for even rows
     },
     hoverRow: {
-      backgroundColor: '#ddd', // Highlight row on hover
+      cursor: 'pointer',
+      transition: 'background-color 0.3s', // Smooth transition for hover effect
     },
     error: {
       color: 'red',
+      marginBottom: '20px',
     },
   };
 
@@ -84,7 +97,7 @@ const Qusers = () => {
       
       <Usernavbar1 />
       <div style={styles.container}>
-        <h1>Submission History</h1>
+        <h1 style={styles.heading}>Submission History</h1>
         {error && <p style={styles.error}>{error}</p>}
         <table style={styles.table}>
           <thead>
@@ -98,7 +111,12 @@ const Qusers = () => {
             {submissions.map((submission, index) => (
               <tr 
                 key={submission._id} 
-                style={index % 2 === 0 ? styles.evenRow : {}}
+                style={{
+                  ...styles.hoverRow, 
+                  ...(index % 2 === 0 ? styles.evenRow : {}),
+                }}
+                onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#e8f4ff')} // Hover effect
+                onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = index % 2 === 0 ? '#f9f9f9' : '#fff')}
               >
                 <td style={styles.td}>{submission.week}</td>
                 <td style={styles.td}>{submission.score}</td>

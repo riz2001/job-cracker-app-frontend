@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import Usernavbar1 from './Usernavbar1';
 import Adminnavbar from './Adminnavbar';
 
 function Passedtestcass() {
@@ -81,49 +80,52 @@ function Passedtestcass() {
     return (
         <div>
             <Adminnavbar/>
-        
-        <div style={styles.container}>
-            <div style={styles.weekSelector}>
-                <label>Select Week:</label>
-                <select value={week} onChange={handleWeekChange} style={styles.select}>
-                    <option value="">--Select Week--</option>
-                    {weeks.map((weekNum) => (
-                        <option key={weekNum} value={weekNum}>{`Week ${weekNum}`}</option>
-                    ))}
-                </select>
+
+            <div style={styles.container}>
+                <h2 style={styles.header}><center><b>SUBMIT SOLUTIONS</b></center></h2> {/* Centered heading */}
                 
-                <button onClick={fetchPassedCodes} style={styles.button} disabled={loading}>
-                    {loading ? 'Loading...' : 'Fetch Passed Codes'}
-                </button>
-                {/* Add Answers button placed in the same row */}
-                <button onClick={handleAddAnswers} style={{ ...styles.button, marginLeft: '10px' }}>
-                    Add Answers
-                </button>
-            </div>
-            <div style={styles.header}>
-                {/* Display question title only if submissions are available */}
-                {submissions.length > 0 && (
-                    <h3 style={styles.questionTitle}>{submissions[0].questionId.title}</h3>
-                )}
-            </div>
+                <div style={styles.weekSelector}>
+                    <label>Select Week:</label>
+                    <select value={week} onChange={handleWeekChange} style={styles.select}>
+                        <option value="">--Select Week--</option>
+                        {weeks.map((weekNum) => (
+                            <option key={weekNum} value={weekNum}>{`Week ${weekNum}`}</option>
+                        ))}
+                    </select>
+                    
+                    <button onClick={fetchPassedCodes} style={styles.button} disabled={loading}>
+                        {loading ? 'Loading...' : 'Fetch Passed Codes'}
+                    </button>
+                    {/* Add Answers button placed in the same row */}
+                    <button onClick={handleAddAnswers} style={{ ...styles.button, marginLeft: '10px' }}>
+                        Add Answers
+                    </button>
+                </div>
+                
+                <div style={styles.header}>
+                    {/* Display question title only if submissions are available */}
+                    {submissions.length > 0 && (
+                        <h3 style={styles.questionTitle}>{submissions[0].questionId.title}</h3>
+                    )}
+                </div>
 
-            {error && <p style={styles.error}>{error}</p>}
+                {error && <p style={styles.error}>{error}</p>}
 
-            <div style={styles.submissionsList}>
-                {submissions.length > 0 ? (
-                    submissions.map((submission) => (
-                        <div key={submission._id} style={styles.submissionItem}>
-                            <p><strong>Code:</strong></p>
-                            <pre style={styles.code}>{submission.code}</pre>
-                            <button onClick={() => saveToDatabase(submission)} style={styles.button}>
-                                Save to Database
-                            </button>
-                        </div>
-                    ))
-                ) : 
-                    <p></p>
-                }
-            </div>
+                <div style={styles.submissionsList}>
+                    {submissions.length > 0 ? (
+                        submissions.map((submission) => (
+                            <div key={submission._id} style={styles.submissionItem}>
+                                <p><strong>Code:</strong></p>
+                                <pre style={styles.code}>{submission.code}</pre>
+                                <button onClick={() => saveToDatabase(submission)} style={styles.button}>
+                                    Save to Database
+                                </button>
+                            </div>
+                        ))
+                    ) : (
+                        <p>No submissions available.</p> // Providing a message if no submissions exist
+                    )}
+                </div>
             </div>
         </div>
     );
@@ -142,9 +144,7 @@ const styles = {
         boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
     },
     header: {
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'flex-start', // Align items to the left
+        textAlign: 'center', // Center the header text
         marginBottom: '20px',
     },
     questionTitle: {

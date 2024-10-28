@@ -4,53 +4,51 @@ import Usernavbar1 from './Usernavbar1';
 import Adminnavbar from './Adminnavbar';
 
 const Addquestions = () => {
+  const [company, setCompany] = useState(''); // New state for Company
   const [questions, setQuestions] = useState([{ question: '', options: ['', ''], answer: '', explanation: '' }]);
   const [week, setWeek] = useState('');
   const [dueDate, setDueDate] = useState('');
 
-  // Handle question change
   const handleQuestionChange = (index, field, value) => {
     const newQuestions = [...questions];
     newQuestions[index][field] = value;
     setQuestions(newQuestions);
   };
 
-  // Handle options change
   const handleOptionChange = (questionIndex, optionIndex, value) => {
     const newQuestions = [...questions];
     newQuestions[questionIndex].options[optionIndex] = value;
     setQuestions(newQuestions);
   };
 
-  // Add a new question object to the form
   const addQuestion = () => {
     setQuestions([...questions, { question: '', options: ['', ''], answer: '', explanation: '' }]);
   };
 
-  // Add more options to a question
   const addOption = (questionIndex) => {
     const newQuestions = [...questions];
     newQuestions[questionIndex].options.push('');
     setQuestions(newQuestions);
   };
 
-  // Handle week change
+  const handleCompanyChange = (value) => {
+    setCompany(value);
+  };
+
   const handleWeekChange = (value) => {
     setWeek(value);
   };
 
-  // Handle due date change
   const handleDueDateChange = (value) => {
     setDueDate(value);
   };
 
-  // Submit the questions to the backend
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Add the shared week and due date to each question before submitting
     const updatedQuestions = questions.map((q) => ({
       ...q,
+      company: company, // Adding company to each question
       week: week,
       dueDate: dueDate,
     }));
@@ -58,6 +56,7 @@ const Addquestions = () => {
     try {
       await axios.post('http://localhost:3030/api/questions', updatedQuestions);
       alert('Questions added successfully!');
+      setCompany('');
       setQuestions([{ question: '', options: ['', ''], answer: '', explanation: '' }]);
       setWeek('');
       setDueDate('');
@@ -70,10 +69,23 @@ const Addquestions = () => {
   return (
     <div>
       <Adminnavbar />
-      <div className="outer-card"> {/* Outer card view */}
+      <div className="outer-card">
         <div className="admin-container">
           <h2 className="admin-title">ADD QUESTIONS</h2>
           <form onSubmit={handleSubmit} className="admin-form">
+
+            {/* Company Field */}
+            <label className="form-label">
+              Company:
+              <input
+                type="text"
+                value={company}
+                onChange={(e) => handleCompanyChange(e.target.value)}
+                required
+                className="form-input"
+              />
+            </label>
+            <br />
 
             <label className="form-label">
               Week:

@@ -94,7 +94,7 @@ const Fourweek = () => {
 
       <style jsx>{`
         .four-week-container {
-          max-width: 1000px;
+          max-width: 1200px;
           margin: 0 auto;
           padding: 30px;
           background-color: #ffffff;

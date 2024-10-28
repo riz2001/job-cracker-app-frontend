@@ -102,6 +102,13 @@ const Usignin = () => {
   const handleSubmit = (event) => {
     event.preventDefault(); // Prevent default form submission behavior
 
+    // Check if the credentials match the admin
+    if (input.email === 'admin@gmail.com' && input.password === '12345678') {
+      navigate('approve'); // Redirect to admin dashboard or a specified route
+      return;
+    }
+
+    // Regular user sign-in process
     axios.post("http://localhost:3030/signin", input)
       .then(response => {
         const { status, token, user } = response.data; // Destructure response data
@@ -120,8 +127,9 @@ const Usignin = () => {
           sessionStorage.setItem("email", user.email);
           sessionStorage.setItem("timeSlot", user.timeSlot || "");
           sessionStorage.setItem("date", user.date || "");
+          console.log(user._id);
 
-          navigate("/dashboard");
+          navigate("/dashboard"); // Redirect regular users to the user dashboard
         }
       })
       .catch(error => {

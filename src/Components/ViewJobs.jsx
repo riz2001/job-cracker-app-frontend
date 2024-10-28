@@ -54,28 +54,32 @@ const ViewJobs = () => {
 
   useEffect(() => {
     const fetchJobs = async () => {
-      const token = sessionStorage.getItem('token');
       try {
-        const response = await axios.post('http://localhost:3030/ViewAllJob', {}, {
-          headers: { token }
-        });
+        const response = await axios.post('http://localhost:3030/ViewAllJob');
         setJobs(response.data);
       } catch (error) {
-        console.error("Error fetching jobs:", error);
+        console.error('Error fetching jobs:', error);
         setError('Failed to fetch jobs. Please try again.');
       }
     };
 
     const fetchRegisteredJobs = async () => {
-      const token = sessionStorage.getItem('token');
+      const userId = sessionStorage.getItem('userId');
+      console.log('Logged in User ID:', userId);
+
+      // Fetch user ID from session storage
+      if (!userId) {
+        setError('User ID not found. Please log in again.');
+        return;
+      }
+
       try {
-        const response = await axios.get('http://localhost:3030/ViewRegistrations', {
-          headers: { token }
-        });
-        const registeredJobIds = new Set(response.data.registrations.map(reg => reg.job_id._id));
+        // Fetch the registered jobs for the specific user
+        const response = await axios.get(`http://localhost:3030/ViewRegistrationss/${userId}`);
+        const registeredJobIds = new Set(response.data.registrations.map((reg) => reg.job_id._id));
         setRegisteredJobs(registeredJobIds);
       } catch (error) {
-        console.error("Error fetching registered jobs:", error);
+        console.error('Error fetching registered jobs:', error);
         setError('Failed to fetch registered jobs. Please try again.');
       }
     };
@@ -85,30 +89,34 @@ const ViewJobs = () => {
   }, []);
 
   const handleRegister = async (jobId) => {
-    const token = sessionStorage.getItem('token');
+    const userId = sessionStorage.getItem('userId'); // Fetch user ID from session storage
+    if (!userId) {
+      setError('User ID not found. Please log in again.');
+      return;
+    }
+
     try {
       const response = await axios.post('http://localhost:3030/RegisterJob', 
-        { job_id: jobId },
-        { headers: { token } }
+        { user_id: userId, job_id: jobId } // Send user_id and job_id in the request body
       );
 
       if (response.data.status === 'success') {
         alert('Registered successfully!');
-        setRegisteredJobs(prev => new Set(prev.add(jobId)));
+        setRegisteredJobs((prev) => new Set(prev.add(jobId)));
       } else if (response.data.status === 'already registered') {
         alert('You are already registered for this job.');
       } else {
         alert('Error registering for job');
       }
     } catch (error) {
-      console.error("Error registering job:", error);
+      console.error('Error registering job:', error);
       setError('An error occurred while registering. Please try again.');
     }
   };
 
   return (
     <div>
-      <Usernavbar1/>
+      <Usernavbar1 />
       {error && <ErrorMessage>{error}</ErrorMessage>}
       <Table>
         <thead>
@@ -128,11 +136,11 @@ const ViewJobs = () => {
               <TableData>{job.location}</TableData>
               <TableData>{job.salary}</TableData>
               <TableData>
-                <RegisterButton 
+                <RegisterButton
                   onClick={() => handleRegister(job._id)}
-               
-                >REGISTER
-                 
+                  disabled={registeredJobs.has(job._id)} // Correctly disable if registered
+                >
+                  {registeredJobs.has(job._id) ? 'Registered' : 'Register'}
                 </RegisterButton>
               </TableData>
             </tr>

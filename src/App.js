@@ -42,6 +42,8 @@ import AddAnswers from './Components/Addanswers';
 import Passeddisplay from './Components/Passeddisplay';
 import Profilepage from './Components/Profilepage';
 import Updation from './Components/Updation';
+import UpdateQuestions from './Components/Updatequestions';
+import Codingupdate from './Components/Codinqupdate';
 
 
 
@@ -72,7 +74,7 @@ function App() {
       <Route path='/ViewJobs' element={<ViewJobs />}/>
       <Route path="/jobs" element={<Joblist />} />
       <Route path="/jobs/:jobId/registrations" element={<JobRegistrations />} />
-      
+
 
       <Route path="/Addoffcampus" element={<Addoffcampus />} />
       <Route path="/Soffcampus" element={<Soffcampus/>} />
@@ -92,6 +94,7 @@ function App() {
    <Route path='/aanswer' element={<Aanswer />}/> 
    <Route path='/aanswerview' element={<Aanswerview />}/> 
    <Route path='/updation' element={<Updation />}/> 
+   <Route path='/updatequestions' element={<UpdateQuestions />}/> 
 
 
    <Route path="/weeklist" element={<Aweekslist />} />
@@ -103,6 +106,7 @@ function App() {
    <Route path="/Codingq" element={<Codingq />} />
    <Route path="/Cweeks" element={<Cweeks />} />
    <Route path="/compiler/:week" element={<Compiler />} />
+   <Route path="/Codingupdate" element={<Codingupdate />} />
 
    <Route path="/submissionweeks" element={<Weekcompilers/>} />
    <Route path="/submissions/week/:week" element={<Csubmissiondetails/>} />
