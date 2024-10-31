@@ -18,7 +18,7 @@ import Weekreview from './Components/Weekreview';
 import Aweekslist from './Components/Aweeklist';
 import AweekSubmissions from './Components/Aweeksubmissions';
 import Codingq from './Components/Codinq';
-import Cweeks from './Components/Cweek';
+
 import Compiler from './Components/Compiler';
 import Weekcompilers from './Components/Weekcompilers';
 import Csubmissiondetails from './Components/Csubmisiondetails';
@@ -44,6 +44,14 @@ import Profilepage from './Components/Profilepage';
 import Updation from './Components/Updation';
 import UpdateQuestions from './Components/Updatequestions';
 import Codingupdate from './Components/Codinqupdate';
+
+import Cweekss from './Components/Cweekss';
+import Deletequiz from './Components/Deletequiz';
+import Deletecode from './Components/Deletecode';
+import Offdelete from './Components/Offdelete';
+import Deletej from './Components/Deletej';
+import DeleteMonth from './Components/Deletemonth';
+
 
 
 
@@ -74,6 +82,8 @@ function App() {
       <Route path='/ViewJobs' element={<ViewJobs />}/>
       <Route path="/jobs" element={<Joblist />} />
       <Route path="/jobs/:jobId/registrations" element={<JobRegistrations />} />
+      <Route path="/deletejobs" element={<Deletej />} />
+      <Route path="/offdelete" element={<Offdelete />} />
 
 
       <Route path="/Addoffcampus" element={<Addoffcampus />} />
@@ -82,6 +92,7 @@ function App() {
       <Route path="/userlist" element={<UsersList/>} />
       <Route path="/monthpage" element={<MonthPage/>} />
       <Route path="/user/timeslots" element={<Usertimeslots />} />
+      <Route path="/Deletemonth" element={<DeleteMonth />} />
 
        
 
@@ -90,7 +101,7 @@ function App() {
         
     <Route path='/addquestions' element={<Addquestions />}/>
    <Route path='/weekreview' element={<Weekreview />}/>
-   <Route path='/week/:week' element={<Quizdisplay />}/> 
+   <Route path='/company/:company/week/:week' element={<Quizdisplay />}/> 
    <Route path='/aanswer' element={<Aanswer />}/> 
    <Route path='/aanswerview' element={<Aanswerview />}/> 
    <Route path='/updation' element={<Updation />}/> 
@@ -101,12 +112,14 @@ function App() {
    <Route path="/submissions/:week" element={<AweekSubmissions />} />
    <Route path="/Qusers" element={<Qusers/>} />//users submission
    <Route path="/scoretable" element={<AscoreTable />} />
+   <Route path="/deletequiz" element={<Deletequiz />} />
 
 
    <Route path="/Codingq" element={<Codingq />} />
-   <Route path="/Cweeks" element={<Cweeks />} />
-   <Route path="/compiler/:week" element={<Compiler />} />
+   <Route path="/Cweeks" element={<Cweekss />} />
+      <Route path="/compiler/:company/:week" element={<Compiler />} />
    <Route path="/Codingupdate" element={<Codingupdate />} />
+   <Route path="/deletecode" element={<Deletecode />} />
 
    <Route path="/submissionweeks" element={<Weekcompilers/>} />
    <Route path="/submissions/week/:week" element={<Csubmissiondetails/>} />

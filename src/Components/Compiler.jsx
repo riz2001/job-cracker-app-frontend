@@ -4,7 +4,7 @@ import axios from 'axios';
 import Usernavbar1 from './Usernavbar1';
 
 function Compiler() {
-    const { week } = useParams();
+    const { week, company } = useParams();
     const [questions, setQuestions] = useState([]);
     const [dueDate, setDueDate] = useState('');
     const [code, setCode] = useState('');
@@ -15,21 +15,21 @@ function Compiler() {
     const [testResult, setTestResult] = useState([]);
     const [selectedQuestion, setSelectedQuestion] = useState(null);
     const [passedCount, setPassedCount] = useState(0);
-
     useEffect(() => {
         const fetchQuestions = async () => {
             try {
-                const res = await axios.get(`http://localhost:3030/api/cquestions/week/${week}`);
+                const res = await axios.get(`http://localhost:3030/api/cquestions/week/${week}/company/${company}`);
                 setQuestions(res.data);
                 if (res.data.length > 0) {
                     setDueDate(res.data[0].dueDate);
                 }
             } catch (err) {
-                console.error('Error fetching questions for the week', err);
+                console.error('Error fetching questions for the week and company', err);
             }
         };
-        if (week) fetchQuestions();
-    }, [week]);
+        
+        if (week && company) fetchQuestions();
+    }, [week, company]);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -130,7 +130,8 @@ function Compiler() {
             totalTestCases: selectedQuestion.testCases.length,
             testResults: testResult,
             dueDate: selectedQuestion.dueDate,
-            code: code  // Use the code from state instead of selectedQuestion
+            code: code ,
+            company:company // Use the code from state instead of selectedQuestion
         };
         try {
             const res = await axios.post('http://localhost:3030/api/compilerSubmissions', submissionData, {

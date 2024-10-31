@@ -70,14 +70,16 @@ const Usertimeslots = () => {
                 <td style={styles.td}>{slot.timeSlot}</td>
                 <td style={styles.td}>{new Date(slot.date).toLocaleDateString()}</td>
                 <td style={styles.td}>
-                  {slot.meetingLink ? (
-                    <a href={slot.meetingLink} target="_blank" rel="noopener noreferrer" style={styles.link}>
-                      {slot.meetingLink}
-                    </a>
-                  ) : (
-                    <span>No meeting link provided</span>
-                  )}
-                </td>
+               
+  {slot.meetingLink ? (
+    <a href={slot.meetingLink} target="_blank" rel="noopener noreferrer" style={styles.link}>
+      Meeting Link
+    </a>
+  ) : (
+    <span>No meeting link provided</span>
+  )}
+</td>
+
                 <td style={styles.td}>
                   <button onClick={() => confirmAttendance(slot._id)} style={styles.button}>Confirm</button>
                 </td>

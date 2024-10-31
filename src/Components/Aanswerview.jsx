@@ -4,8 +4,10 @@ import Usernavbar1 from './Usernavbar1';
 
 const Aanswerview = () => {
   const [week, setWeek] = useState('');
-  const [weeks, setWeeks] = useState([]); // Store available weeks
-  const [answers, setAnswers] = useState([]); // Store fetched answers and questions
+  const [company, setCompany] = useState(''); // State for selected company
+  const [weeks, setWeeks] = useState([]);
+  const [companies, setCompanies] = useState([]); // Store available companies
+  const [answers, setAnswers] = useState([]);
 
   // Fetch available weeks
   const fetchAvailableWeeks = async () => {
@@ -17,10 +19,20 @@ const Aanswerview = () => {
     }
   };
 
-  // Fetch answers and questions by week
-  const fetchAnswersByWeek = async (selectedWeek) => {
+  // Fetch available companies (Assuming you have an API endpoint for this)
+  const fetchAvailableCompanies = async () => {
     try {
-      const response = await axios.get(`http://localhost:3030/api/user-answers/${selectedWeek}`);
+      const response = await axios.get('http://localhost:3030/api/available-companies');
+      setCompanies(response.data);
+    } catch (error) {
+      console.error('Error fetching companies:', error);
+    }
+  };
+
+  // Fetch answers and questions by week and company
+  const fetchAnswersByWeekAndCompany = async (selectedWeek, selectedCompany) => {
+    try {
+      const response = await axios.get(`http://localhost:3030/api/user-answers/${selectedWeek}/${selectedCompany}`);
       setAnswers(response.data);
     } catch (error) {
       console.error('Error fetching answers:', error);
@@ -32,14 +44,24 @@ const Aanswerview = () => {
   const handleWeekChange = (e) => {
     const selectedWeek = e.target.value;
     setWeek(selectedWeek);
-    if (selectedWeek) {
-      fetchAnswersByWeek(selectedWeek);
+    if (selectedWeek && company) {
+      fetchAnswersByWeekAndCompany(selectedWeek, company);
     }
   };
 
-  // Fetch available weeks when the component mounts
+  // Handle company change
+  const handleCompanyChange = (e) => {
+    const selectedCompany = e.target.value;
+    setCompany(selectedCompany);
+    if (week && selectedCompany) {
+      fetchAnswersByWeekAndCompany(week, selectedCompany);
+    }
+  };
+
+  // Fetch available weeks and companies when the component mounts
   useEffect(() => {
     fetchAvailableWeeks();
+    fetchAvailableCompanies();
   }, []);
 
   return (
@@ -55,6 +77,18 @@ const Aanswerview = () => {
             {weeks.map((availableWeek, index) => (
               <option key={index} value={availableWeek}>
                 Week {availableWeek}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        <div style={styles.companySelector}>
+          <label>Select Company:</label>
+          <select value={company} onChange={handleCompanyChange} style={styles.select} required>
+            <option value="" disabled>Select a company</option>
+            {companies.map((availableCompany, index) => (
+              <option key={index} value={availableCompany}>
+                {availableCompany}
               </option>
             ))}
           </select>
@@ -76,7 +110,7 @@ const Aanswerview = () => {
               </div>
             ))
           ) : (
-            <p>No answers found for this week.</p>
+            <p>No answers found for this week and company.</p>
           )}
         </div>
       </div>
@@ -100,6 +134,11 @@ const styles = {
     marginBottom: '20px',
   },
   weekSelector: {
+    display: 'flex',
+    alignItems: 'center',
+    marginBottom: '20px',
+  },
+  companySelector: {
     display: 'flex',
     alignItems: 'center',
     marginBottom: '20px',

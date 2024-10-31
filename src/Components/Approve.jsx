@@ -9,8 +9,8 @@ const Approve = () => {
     const [message, setMessage] = useState('');
     const [showPopup, setShowPopup] = useState(false);
     const [approvedUser, setApprovedUser] = useState(null);
-    const [selectedYear, setSelectedYear] = useState(''); // State for selected course year
-    const courseYears = ['First Year A Batch', 'First Year B Batch', 'Second Year A Batch', 'Second Year B Batch']; // Course year options
+    const [selectedYear, setSelectedYear] = useState('');
+    const courseYears = ['First Year A Batch', 'First Year B Batch', 'Second Year A Batch', 'Second Year B Batch'];
 
     useEffect(() => {
         const fetchUsers = async () => {
@@ -45,20 +45,30 @@ const Approve = () => {
         }
     };
 
+    const deleteUser = async (userId) => {
+        try {
+            const response = await axios.delete(`http://localhost:3030/users/delete/${userId}`);
+            alert(response.data.message);
+            // Update the user list in state after deletion
+            setUnapprovedUsers(unapprovedUsers.filter(user => user._id !== userId));
+        } catch (error) {
+            console.error('Error deleting user:', error);
+            alert('Failed to delete user');
+        }
+    };
+    
     const closePopup = () => {
         setShowPopup(false);
         setApprovedUser(null);
     };
 
-    // Filter unapproved users based on the selected course year
     const filteredUnapprovedUsers = unapprovedUsers
-        .filter(user => (selectedYear ? user.courseYear === selectedYear : true)) // Filter by selected course year
-        .sort((a, b) => a.rollno.localeCompare(b.rollno)); // Sort by roll number
+        .filter(user => (selectedYear ? user.courseYear === selectedYear : true))
+        .sort((a, b) => a.rollno.localeCompare(b.rollno));
 
-    // Filter approved users based on the selected course year
     const filteredApprovedUsers = approvedUsers
-        .filter(user => (selectedYear ? user.courseYear === selectedYear : true)) // Filter by selected course year
-        .sort((a, b) => a.rollno.localeCompare(b.rollno)); // Sort by roll number
+        .filter(user => (selectedYear ? user.courseYear === selectedYear : true))
+        .sort((a, b) => a.rollno.localeCompare(b.rollno));
 
     return (
         <div style={styles.container}>
@@ -80,42 +90,43 @@ const Approve = () => {
                 ))}
             </select>
 
-            {filteredUnapprovedUsers.length === 0 ? (
-                <p style={styles.noUsersMessage}>No unapproved users available.</p>
-            ) : (
-                <>
-                    <h3>Unapproved Users</h3>
-                    <table style={styles.table}>
-                        <thead style={styles.thead}>
-                            <tr>
-                                <th style={styles.th}>Roll No</th>
-                                <th style={styles.th}>Name</th>
-                                <th style={styles.th}>Admission No</th>
-                                <th style={styles.th}>Course Year</th>
-                                <th style={styles.th}>Phone No</th>
-                                <th style={styles.th}>Email</th>
-                                <th style={styles.th}>Action</th>
+            <h3>Unapproved Users</h3>
+            {filteredUnapprovedUsers.length > 0 ? (
+                <table style={styles.table}>
+                    <thead style={styles.thead}>
+                        <tr>
+                            <th style={styles.th}>Roll No</th>
+                            <th style={styles.th}>Name</th>
+                            <th style={styles.th}>Admission No</th>
+                            <th style={styles.th}>Course Year</th>
+                            <th style={styles.th}>Phone No</th>
+                            <th style={styles.th}>Email</th>
+                            <th style={styles.th}>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {filteredUnapprovedUsers.map((user) => (
+                            <tr key={user._id} style={styles.row}>
+                                <td style={styles.td}>{user.rollno}</td>
+                                <td style={styles.td}>{user.name}</td>
+                                <td style={styles.td}>{user.admissionno}</td>
+                                <td style={styles.td}>{user.courseYear}</td>
+                                <td style={styles.td}>{user.phoneno}</td>
+                                <td style={styles.td}>{user.email}</td>
+                                <td style={styles.td}>
+                                    <button style={styles.approveButton} onClick={() => approveUser(user._id)}>
+                                        Approve
+                                    </button>
+                                    <button style={styles.deleteButton} onClick={() => deleteUser(user._id, false)}>
+                                        Delete
+                                    </button>
+                                </td>
                             </tr>
-                        </thead>
-                        <tbody>
-                            {filteredUnapprovedUsers.map((user) => (
-                                <tr key={user._id} style={styles.row}>
-                                    <td style={styles.td}>{user.rollno}</td>
-                                    <td style={styles.td}>{user.name}</td>
-                                    <td style={styles.td}>{user.admissionno}</td>
-                                    <td style={styles.td}>{user.courseYear}</td>
-                                    <td style={styles.td}>{user.phoneno}</td>
-                                    <td style={styles.td}>{user.email}</td>
-                                    <td style={styles.td}>
-                                        <button style={styles.approveButton} onClick={() => approveUser(user._id)}>
-                                            Approve
-                                        </button>
-                                    </td>
-                                </tr>
-                            ))}
-                        </tbody>
-                    </table>
-                </>
+                        ))}
+                    </tbody>
+                </table>
+            ) : (
+                <p style={styles.noUsersMessage}>No unapproved users available.</p>
             )}
 
             <h3>Approved Users</h3>
@@ -130,6 +141,7 @@ const Approve = () => {
                             <th style={styles.th}>Phone No</th>
                             <th style={styles.th}>Email</th>
                             <th style={styles.th}>Status</th>
+                            <th style={styles.th}>Actions</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -143,6 +155,11 @@ const Approve = () => {
                                 <td style={styles.td}>{user.email}</td>
                                 <td style={styles.td}>
                                     <span style={styles.approvedText}>Approved</span>
+                                </td>
+                                <td style={styles.td}>
+                                    <button style={styles.deleteButton} onClick={() => deleteUser(user._id, true)}>
+                                        Delete
+                                    </button>
                                 </td>
                             </tr>
                         ))}
@@ -170,7 +187,20 @@ const Approve = () => {
 export default Approve;
 
 // Styles
+
+    // Previous styles here...
+  
+// Styles
 const styles = {
+    deleteButton: {
+        backgroundColor: '#dc3545',
+        color: 'white',
+        border: 'none',
+        borderRadius: '5px',
+        padding: '8px 12px',
+        cursor: 'pointer',
+        marginLeft: '8px',
+    },
     container: {
         padding: '20px',
         fontFamily: 'Arial, sans-serif',

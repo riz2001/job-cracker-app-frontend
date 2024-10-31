@@ -124,10 +124,13 @@ const Usignin = () => {
           sessionStorage.setItem("userId", user._id);
           sessionStorage.setItem("userName", user.name);
           sessionStorage.setItem("admissionNo", user.admissionno);
+          
+          sessionStorage.setItem("courseYear", user.courseYear);
           sessionStorage.setItem("email", user.email);
           sessionStorage.setItem("timeSlot", user.timeSlot || "");
           sessionStorage.setItem("date", user.date || "");
           console.log(user._id);
+          console.log(user.courseYear);
 
           navigate("/dashboard"); // Redirect regular users to the user dashboard
         }

@@ -66,7 +66,8 @@ const Codingupdate = () => {
             .then(() => {
                 // Fetch updated data after the update
                 fetchWeeklyData(selectedWeek);
-                setSuccessMessage('Question updated successfully!'); // Set success message
+                setSuccessMessage('Question updated successfully!');
+                alert('Question updated successfully!') // Set success message
                 setTimeout(() => setSuccessMessage(''), 3000); // Clear success message after 3 seconds
             })
             .catch(error => {

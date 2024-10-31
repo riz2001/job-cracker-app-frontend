@@ -90,8 +90,17 @@ const ViewJobs = () => {
 
   const handleRegister = async (jobId) => {
     const userId = sessionStorage.getItem('userId'); // Fetch user ID from session storage
+    const courseYear = sessionStorage.getItem('courseYear'); // Fetch course year from session storage
+
     if (!userId) {
       setError('User ID not found. Please log in again.');
+      return;
+    }
+
+    // Prevent registration based on course year
+    if (courseYear === 'First Year A Batch' || courseYear === 'First Year B Batch') {
+      alert('First Year A and First Year B are not allowed to register for the quiz.')
+      setError('First Year A and First Year B are not allowed to register for the quiz.');
       return;
     }
 

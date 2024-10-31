@@ -3,20 +3,20 @@ import axios from 'axios';
 import Adminnavbar from './Adminnavbar';
 
 function AddAnswers() {
-    const [weeks, setWeeks] = useState([]); // Initialize weeks as an empty array
+    const [weeks, setWeeks] = useState([]); 
     const [selectedWeek, setSelectedWeek] = useState('');
     const [questions, setQuestions] = useState([]);
     const [selectedQuestion, setSelectedQuestion] = useState(null);
     const [code, setCode] = useState('');
+    const [company, setCompany] = useState(''); // Add company state
     const [error, setError] = useState(null);
     const [successMessage, setSuccessMessage] = useState('');
 
-    // Fetch available weeks that have questions
     useEffect(() => {
         const fetchAvailableWeeks = async () => {
             try {
-                const response = await axios.get('http://localhost:3030/api/compiler/weeks'); // Adjust the endpoint as needed
-                setWeeks(response.data); // Set available weeks
+                const response = await axios.get('http://localhost:3030/api/compiler/weeks');
+                setWeeks(response.data);
             } catch (err) {
                 console.error('Error fetching weeks:', err);
                 setError('Error fetching weeks. Please try again.');
@@ -26,7 +26,6 @@ function AddAnswers() {
         fetchAvailableWeeks();
     }, []);
 
-    // Fetch questions based on selected week
     useEffect(() => {
         const fetchQuestions = async () => {
             if (selectedWeek) {
@@ -48,8 +47,8 @@ function AddAnswers() {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        if (!selectedQuestion || !code) {
-            setError('Please select a question and enter your code.');
+        if (!selectedQuestion || !code || !company) {
+            setError('Please select a question, enter your code, and select a company.');
             return;
         }
 
@@ -58,11 +57,13 @@ function AddAnswers() {
                 week: selectedWeek,
                 questionId: selectedQuestion,
                 code,
+                company, // Include company in the saved data
             });
-            alert('Question and code saved successfully!'); // Display alert
-            setSuccessMessage(''); // Reset success message
+            alert('Question and code saved successfully!');
+            setSuccessMessage('Question and code saved successfully!');
             setSelectedQuestion(null);
             setCode('');
+            setCompany('');
             setError(null);
         } catch (err) {
             console.error('Error saving question:', err);
@@ -74,62 +75,76 @@ function AddAnswers() {
         <div>
             <Adminnavbar/>
        
-        <div style={styles.container}>
-            <h2><center>ADD ANSWERS</center></h2>
-            <div style={styles.formGroup}>
-                <label>Select Week:</label>
-                <select style={styles.weekSelector} value={selectedWeek} onChange={(e) => setSelectedWeek(e.target.value)}>
-                    <option value="">--Select Week--</option>
-                    {weeks.map((weekNum) => (
-                        <option key={weekNum} value={weekNum}>{`Week ${weekNum}`}</option>
-                    ))}
-                </select>
-            </div>
-            {questions.length > 0 ? (
-                <div style={styles.questionsList}>
-                    <h3>Select a Question:</h3>
-                    <div style={styles.questionsContainer}>
-                        {questions.map((question) => (
-                            <div
-                                key={question._id}
-                                onClick={() => setSelectedQuestion(question._id)}
-                                style={{
-                                    ...styles.questionItem,
-                                    backgroundColor: selectedQuestion === question._id ? '#e0e0e0' : '#fff',
-                                }}
-                            >
-                                {question.title}
-                            </div>
-                        ))}
-                    </div>
-                </div>
-            ) : (
-                <p>No questions available for this week.</p>
-            )}
-            <form onSubmit={handleSubmit} style={styles.answerForm}>
+            <div style={styles.container}>
+                <h2><center>ADD ANSWERS</center></h2>
                 <div style={styles.formGroup}>
-                    <label>Code:</label>
-                    <textarea
-                        value={code}
-                        onChange={(e) => setCode(e.target.value)}
-                        required
-                        style={styles.codeInput}
-                    />
+                    <label>Select Week:</label>
+                    <select style={styles.weekSelector} value={selectedWeek} onChange={(e) => setSelectedWeek(e.target.value)}>
+                        <option value="">--Select Week--</option>
+                        {weeks.map((weekNum) => (
+                            <option key={weekNum} value={weekNum}>{`Week ${weekNum}`}</option>
+                        ))}
+                    </select>
                 </div>
-                {error && <p style={styles.errorMessage}>{error}</p>}
-                {successMessage && <p style={styles.successMessage}>{successMessage}</p>}
-                <button type="submit" style={styles.submitButton}>Save Answer</button>
-            </form>
-        </div>
+                
+                {questions.length > 0 ? (
+                    <div style={styles.questionsList}>
+                        <h3>Select a Question:</h3>
+                        <div style={styles.questionsContainer}>
+                            {questions.map((question) => (
+                                <div
+                                    key={question._id}
+                                    onClick={() => setSelectedQuestion(question._id)}
+                                    style={{
+                                        ...styles.questionItem,
+                                        backgroundColor: selectedQuestion === question._id ? '#e0e0e0' : '#fff',
+                                    }}
+                                >
+                                    {question.title}
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                ) : (
+                    <p>No questions available for this week.</p>
+                )}
+
+                <form onSubmit={handleSubmit} style={styles.answerForm}>
+                    <div style={styles.formGroup}>
+                        <label>Code:</label>
+                        <textarea
+                            value={code}
+                            onChange={(e) => setCode(e.target.value)}
+                            required
+                            style={styles.codeInput}
+                        />
+                    </div>
+                    
+                    <div style={styles.formGroup}>
+                        <label>Company:</label>
+                        <input
+                            type="text"
+                            value={company}
+                            onChange={(e) => setCompany(e.target.value)}
+                            required
+                            style={styles.input}
+                        />
+                    </div>
+
+                    {error && <p style={styles.errorMessage}>{error}</p>}
+                    {successMessage && <p style={styles.successMessage}>{successMessage}</p>}
+                    
+                    <button type="submit" style={styles.submitButton}>Save Answer</button>
+                </form>
+            </div>
         </div>
     );
 }
 
-// Styles as a JavaScript object
 const styles = {
     container: {
         padding: '20px',
-        maxWidth: '800px', // Increased maxWidth for larger card view
+        maxWidth: '800px',
         margin: 'auto',
         border: '1px solid #ddd',
         borderRadius: '5px',
@@ -175,11 +190,17 @@ const styles = {
     },
     codeInput: {
         width: '100%',
-        height: '200px', // Increased height for the textarea
+        height: '200px',
         padding: '10px',
         border: '1px solid #ccc',
         borderRadius: '4px',
         marginTop: '5px',
+    },
+    input: {
+        width: '100%',
+        padding: '10px',
+        border: '1px solid #ccc',
+        borderRadius: '4px',
     },
     submitButton: {
         backgroundColor: '#4CAF50',

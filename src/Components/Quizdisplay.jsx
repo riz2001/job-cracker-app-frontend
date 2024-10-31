@@ -4,9 +4,10 @@ import axios from 'axios';
 import Usernavbar1 from './Usernavbar1';
 
 const Quizdisplay = () => {
-  const { week } = useParams(); // Get the week number from the URL
+ // Get the week number from the URL
   const [questions, setQuestions] = useState([]);
   const [answers, setAnswers] = useState([]);
+  const { company, week } = useParams(); 
   const [submitted, setSubmitted] = useState(false);
   const [score, setScore] = useState(null);
   const [results, setResults] = useState([]);
@@ -14,40 +15,46 @@ const Quizdisplay = () => {
   const [error, setError] = useState(null);
   const [alreadySubmitted, setAlreadySubmitted] = useState(false); // Track if the user already submitted
   const [dueDate, setDueDate] = useState(''); // State to store the due date
-
+  console.log(`Fetching questions for Company: ${company}, Week: ${week}`);
   // Fetch questions and due date for the specific week
   useEffect(() => {
     const fetchQuestions = async () => {
-      try {
-        setLoading(true);
-        const response = await axios.get(`http://localhost:3030/api/questions/${week}`);
-        setQuestions(response.data);
-        setAnswers(new Array(response.data.length).fill('')); // Initialize answers array
+  try {
+    setLoading(true);
+   
 
-        // Set the due date from the response (assumes due date is part of the response)
-        if (response.data.length > 0) {
-          setDueDate(response.data[0].dueDate); // Assuming all questions have the same due date
-        }
+    const response = await axios.get(`http://localhost:3030/api/company/${company}/week/${week}`);
+    
+    console.log("API Response:", response.data); // Add this line to log the response
+    
+    setQuestions(response.data);
+    setAnswers(new Array(response.data.length).fill('')); // Initialize answers array
 
-        setLoading(false);
-      } catch (error) {
-        setError('Error fetching questions');
-        setLoading(false);
-      }
-    };
+    // Set the due date from the response (assumes due date is part of the response)
+    if (response.data.length > 0) {
+      setDueDate(response.data[0].dueDate); // Assuming all questions have the same due date
+    }
 
+    setLoading(false);
+  } catch (error) {
+    console.error('Error fetching questions:', error); // Log the error
+    setError('Error fetching questions');
+    setLoading(false);
+  }
+};
+  
     fetchQuestions();
-  }, [week]);
+  }, [company, week]);
+  
 
-  // Check if the user has already submitted for this week
   useEffect(() => {
     const checkSubmission = async () => {
       const token = sessionStorage.getItem('token');
       try {
-        const response = await axios.get(`http://localhost:3030/api/check-submission/${week}`, {
+        const response = await axios.get(`http://localhost:3030/api/check-submission/${company}/${week}`, {
           headers: { Authorization: `Bearer ${token}` }
         });
-
+  
         if (response.data.submitted) {
           setAlreadySubmitted(true); // Set the state to disable form submission
         }
@@ -55,10 +62,10 @@ const Quizdisplay = () => {
         console.error('Error checking submission:', error);
       }
     };
-
+  
     checkSubmission();
-  }, [week]);
-
+  }, [company, week]);
+  
   // Handle answer changes
   const handleAnswerChange = (index, value) => {
     const newAnswers = [...answers];
@@ -69,22 +76,23 @@ const Quizdisplay = () => {
   // Handle quiz submission
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+  
     const userAnswers = questions.map((question, index) => ({
       questionId: question._id,
       answer: answers[index]
     }));
-
+  
     try {
       const token = sessionStorage.getItem('token');
       const response = await axios.post('http://localhost:3030/api/submit-quiz', {
+        company, // Include company name in the submission
         week,
         answers: userAnswers,
         dueDate // Include the due date in the submission
       }, {
         headers: { Authorization: `Bearer ${token}` }
       });
-
+  
       setScore(response.data.score);
       setResults(response.data.results);
       setSubmitted(true);
@@ -94,7 +102,7 @@ const Quizdisplay = () => {
       window.alert(error.response?.data?.message || 'Error submitting quiz. Please try again.');
     }
   };
-
+  
   if (loading) {
     return <div className="loading">Loading questions...</div>;
   }
@@ -218,11 +226,13 @@ const Quizdisplay = () => {
         <div className="due-date">Due Date: {dueDate ? new Date(dueDate).toLocaleDateString() : 'Not set'}</div> {/* Display due date */}
         
         <form onSubmit={handleSubmit} className="quiz-form">
-          {questions.length > 0 ? (
+        {questions.length > 0 ? (
             <div className="questions-card"> {/* Added a card for all questions */}
               {questions.map((question, index) => (
                 <div key={index} className="question-block">
-                  <h3 className="question-text">{question.question}</h3>
+                  <h3 className="question-text">
+                    {index + 1}. {question.question} {/* Added index number */}
+                  </h3>
                   <div className="options-container">
                     {question.options.map((option, optionIndex) => (
                       <label key={optionIndex} className="option-label">

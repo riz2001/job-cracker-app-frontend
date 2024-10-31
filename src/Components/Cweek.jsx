@@ -1,47 +1,80 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
-import Usernavbar from './Usernavbar';
 import Usernavbar1 from './Usernavbar1';
 
-const Cweeks = () => {
+const Cweek = () => {
     const [weeks, setWeeks] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [selectedCompany, setSelectedCompany] = useState(''); // State for selected company
+    const [companies, setCompanies] = useState([]); // State for available companies
 
+    // Fetch available companies when the component mounts
+    useEffect(() => {
+        const fetchCompanies = async () => {
+            try {
+                const res = await axios.get('http://localhost:3030/api/companies'); // Update this URL to your actual companies endpoint
+                setCompanies(res.data); // Assuming response is an array of companies
+            } catch (err) {
+                console.error('Error fetching companies:', err);
+                setError('Error fetching companies');
+            }
+        };
+
+        fetchCompanies();
+    }, []);
+
+    // Fetch weeks when the selected company changes
     useEffect(() => {
         const fetchWeeks = async () => {
+            if (!selectedCompany) return; // Don't fetch if no company is selected
+            setLoading(true);
             try {
-                const res = await axios.get('http://localhost:3030/api/cquestions/weeks');
+                const res = await axios.get(`http://localhost:3030/api/cquestions/weeks/${selectedCompany}`);
                 setWeeks(res.data);
-                setLoading(false);
             } catch (err) {
                 setError('Error fetching weeks');
+            } finally {
                 setLoading(false);
             }
         };
 
         fetchWeeks();
-    }, []);
+    }, [selectedCompany]);
 
     if (loading) return <p>Loading...</p>;
     if (error) return <p>{error}</p>;
 
     return (
         <div>
-            <Usernavbar1/>
-      
-        <div className="week-review">
-            <h1 className="title">Registered Weeks</h1>
-            <div className="card-container">
-                {weeks.map((week, index) => (
-                    <div key={index} className="card">
-                        <Link to={`/compiler/${week}`} className="card-link">
-                            <h3 className="card-title">Week {week}</h3>
-                        </Link>
-                    </div>
-                ))}
-            </div>
+            <Usernavbar1 />
+            <div className="week-review">
+                <h1 className="title">Registered Weeks</h1>
+                
+                {/* Dropdown for selecting a company */}
+                <div>
+                    <select 
+                        onChange={(e) => setSelectedCompany(e.target.value)} 
+                        value={selectedCompany}
+                        className="select-dropdown"
+                    >
+                        <option value="">Select a Company</option>
+                        {companies.map((company, index) => (
+                            <option key={index} value={company}>{company}</option>
+                        ))}
+                    </select>
+                </div>
+                
+                <div className="card-container">
+                    {weeks.map((week, index) => (
+                        <div key={index} className="card">
+                            <Link to={`/compiler/${week}`} className="card-link">
+                                <h3 className="card-title">Week {week}</h3>
+                            </Link>
+                        </div>
+                    ))}
+                </div>
             </div>
             <style jsx>{`
                 /* Apply background color to the entire page */
@@ -117,17 +150,23 @@ const Cweeks = () => {
                     color: #ffffff;
                 }
 
-                  .card-link:hover {
-          text-decoration: underline;
-        }
+                .card-link:hover {
+                    text-decoration: underline;
+                }
 
                 .card-title {
                     font-size: 18px;
                     color: #fff; /* White text for better readability */
+                }
+
+                .select-dropdown {
+                    margin-bottom: 20px; /* Add some space below the dropdown */
+                    padding: 10px; /* Add some padding */
+                    font-size: 16px; /* Increase font size for better readability */
                 }
             `}</style>
         </div>
     );
 };
 
-export default Cweeks;
+export default Cweek;

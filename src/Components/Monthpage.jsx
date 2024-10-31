@@ -68,6 +68,14 @@ const styles = {
     borderRadius: '5px',
     marginRight: '10px',
   },
+  deleteButton: {
+    padding: '8px 12px',
+    backgroundColor: '#ffc107',
+    color: '#fff',
+    border: 'none',
+    cursor: 'pointer',
+    borderRadius: '5px',
+  },
 };
 
 // Array of month names
@@ -125,6 +133,19 @@ const MonthPage = () => {
       .catch((error) => {
         console.error(`Error updating status to ${status}:`, error);
         alert(error.response?.data?.message || `Error updating status to ${status}`);
+      });
+  };
+
+  // Function to delete a slot
+  const deleteSlot = (userId, slotId) => {
+    axios.delete(`http://localhost:3030/api/users/${userId}/timeslots/${slotId}`)
+      .then((response) => {
+        setFilteredSlots((prevSlots) => prevSlots.filter(slot => slot._id !== slotId));
+        alert(response.data.message);
+      })
+      .catch((error) => {
+        console.error('Error deleting slot:', error);
+        alert(error.response?.data?.message || 'Error deleting slot');
       });
   };
 
@@ -226,12 +247,13 @@ const MonthPage = () => {
                     <th style={styles.th}>Status</th>
                     <th style={styles.th}>Action - Mark as Attended</th>
                     <th style={styles.th}>Action - Mark as Not Attended</th>
+                    <th style={styles.th}>Action - Delete</th>
                   </tr>
                 </thead>
                 <tbody>
                   {filteredSlots.map((slot) => (
                     <tr key={slot._id}>
-                      <td style={styles.td}>{slot.rollno}</td>
+                       <td style={styles.td}>{slot.rollno}</td>
                       <td style={styles.td}>{slot.name}</td>
                       <td style={styles.td}>{slot.courseYear}</td>
                       <td style={styles.td}>{slot.email}</td>
@@ -269,6 +291,14 @@ const MonthPage = () => {
                           disabled={slot.status === 'not attended'}
                         >
                           Mark as Not Attended
+                        </button>
+                      </td>
+                      <td style={styles.td}>
+                        <button
+                          style={styles.deleteButton}
+                          onClick={() => deleteSlot(slot.userId, slot._id)}
+                        >
+                          Delete
                         </button>
                       </td>
                     </tr>

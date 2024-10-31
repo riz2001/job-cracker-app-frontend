@@ -1,138 +1,102 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom'; // Make sure to import useNavigate
+import { useNavigate } from 'react-router-dom';
 
-const Adminnavbar = () => { // Correct the component declaration
-  const navigate = useNavigate(); // Initialize useNavigate
+const Adminnavbar = () => {
+  const navigate = useNavigate();
 
   const handleCreateRoom = () => {
-    const roomId = Date.now(); // Create a new room ID
-    navigate(`/Adminroom/${roomId}`); // Navigate to the new Admin room
+    const roomId = Date.now();
+    navigate(`/Adminroom/${roomId}`);
   };
 
   const handleSignOut = () => {
-    // Clear token and other session-related items
-    sessionStorage.removeItem("token"); 
-    sessionStorage.removeItem("userId"); 
-    sessionStorage.clear(); // Optionally clear all session data
-
-    // Redirect to the sign-in page
-    navigate("/AdminSignIn"); // Navigate to the sign-in page
+    sessionStorage.removeItem("token");
+    sessionStorage.removeItem("userId");
+    sessionStorage.clear();
+    navigate("/");
   };
 
   return (
     <div>
       <nav className="navbar bg-dark border-bottom border-body" data-bs-theme="dark">
         <div className="container-fluid">
-          <div className="d-flex justify-content-end align-items-center"> {/* Align items vertically */}
+          <div className="d-flex justify-content-end align-items-center">
             <a className="navbar-brand text-light" href="#"><b>JOB CRACKER</b></a>
 
-
-            <div className="dropdown d-flex align-items-center mx-3"> {/* Adds space and flex properties */}
-              <a
-                className="navbar-brand text-light dropdown-toggle"
-                href="#"
-                role="button"
-                id="dropdownMenuLinkOnCampus"
-                data-bs-toggle="dropdown"
-                aria-expanded="false"
-              >
+            {/* USER MANAGEMENT Dropdown */}
+            <div className="dropdown d-flex align-items-center mx-3">
+              <a className="navbar-brand text-light dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
                 USER MANAGEMENT
               </a>
-              <ul className="dropdown-menu" aria-labelledby="dropdownMenuLinkOnCampus">
+              <ul className="dropdown-menu">
                 <li><a className="dropdown-item" href="/approve">Approve Users</a></li>
                 <li><a className="dropdown-item" href="/updation">Updation</a></li>
               </ul>
             </div>
 
-         
-
-            {/* ON CAMPUS Section */}
-            <div className="dropdown d-flex align-items-center mx-3"> {/* Adds space and flex properties */}
-              <a
-                className="navbar-brand text-light dropdown-toggle"
-                href="#"
-                role="button"
-                id="dropdownMenuLinkOnCampus"
-                data-bs-toggle="dropdown"
-                aria-expanded="false"
-              >
+            {/* ON CAMPUS Dropdown */}
+            <div className="dropdown d-flex align-items-center mx-3">
+              <a className="navbar-brand text-light dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
                 ON CAMPUS
               </a>
-              <ul className="dropdown-menu" aria-labelledby="dropdownMenuLinkOnCampus">
+              <ul className="dropdown-menu">
                 <li><a className="dropdown-item" href="/AddJob">Add Job</a></li>
                 <li><a className="dropdown-item" href="/jobs">View Registrations</a></li>
+                <li><a className="dropdown-item" href="/deletejobs">Delete</a></li>
               </ul>
             </div>
 
-            {/* OFF CAMPUS */}
-            <a className="navbar-brand text-light mx-3" href="/Addoffcampus">ADD OFFCAMPUS</a>
+            {/* OFF CAMPUS Dropdown */}
+            <div className="dropdown d-flex align-items-center mx-3">
+              <a className="navbar-brand text-light dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                OFF CAMPUS
+              </a>
+              <ul className="dropdown-menu">
+                <li><a className="dropdown-item" href="/Addoffcampus">Add Off-Campus</a></li>
+                <li><a className="dropdown-item" href="/offdelete">Delete Off-Campus</a></li>
+              </ul>
+            </div>
 
-            {/* INTERVIEW Section */}
-            <div className="dropdown d-flex align-items-center mx-3"> {/* Interview as a dropdown */}
-              <a
-                className="navbar-brand text-light dropdown-toggle"
-                href="#"
-                role="button"
-                id="dropdownMenuLinkInterview"
-                data-bs-toggle="dropdown"
-                aria-expanded="false"
-              >
+            {/* INTERVIEW Dropdown */}
+            <div className="dropdown d-flex align-items-center mx-3">
+              <a className="navbar-brand text-light dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
                 INTERVIEW
               </a>
-              <ul className="dropdown-menu" aria-labelledby="dropdownMenuLinkInterview">
-                <li>
-                  <a 
-                    className="dropdown-item" 
-                    href="#" // Set href to "#" to prevent default navigation
-                    onClick={handleCreateRoom} // Call the function here
-                  >
-                    MOCK INTERVIEW
-                  </a>
-                </li>
-                <li><a className="dropdown-item" href="/userlist">ADD TIME SLOT</a></li>
-                <li><a className="dropdown-item" href="/monthpage">REVIEW</a></li>
+              <ul className="dropdown-menu">
+                <li><a className="dropdown-item" href="#" onClick={handleCreateRoom}>Mock Interview</a></li>
+                <li><a className="dropdown-item" href="/userlist">Add Time Slot</a></li>
+                <li><a className="dropdown-item" href="/monthpage">Review</a></li>
+                <li><a className="dropdown-item" href="/deletemonth">Delete</a></li>
               </ul>
             </div>
 
-            {/* Aptitude Test Dropdown */}
+            {/* APTITUDE TEST Dropdown */}
             <div className="dropdown d-flex align-items-center mx-3">
-              <a
-                className="navbar-brand text-light dropdown-toggle"
-                href="#"
-                role="button"
-                id="dropdownMenuLinkAptitude"
-                data-bs-toggle="dropdown"
-                aria-expanded="false"
-              >
+              <a className="navbar-brand text-light dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
                 APTITUDE TEST
               </a>
-              <ul className="dropdown-menu" aria-labelledby="dropdownMenuLinkAptitude">
+              <ul className="dropdown-menu">
                 <li><a className="dropdown-item" href="/addquestions">Add Aptitude Questions</a></li>
                 <li><a className="dropdown-item" href="/updatequestions">Update</a></li>
                 <li><a className="dropdown-item" href="/weeklist">Aptitude Attendance</a></li>
                 <li><a className="dropdown-item" href="/aanswer">Add Solutions</a></li>
                 <li><a className="dropdown-item" href="/scoretable">Result</a></li>
+                <li><a className="dropdown-item" href="/deletequiz">Deletion</a></li>
               </ul>
             </div>
 
-            {/* CODING TEST Section */}
-            <div className="dropdown d-flex align-items-center mx-3"> {/* Coding Test as a dropdown */}
-              <a
-                className="navbar-brand text-light dropdown-toggle"
-                href="#"
-                role="button"
-                id="dropdownMenuLinkCoding"
-                data-bs-toggle="dropdown"
-                aria-expanded="false"
-              >
+            {/* CODING TEST Dropdown */}
+            <div className="dropdown d-flex align-items-center mx-3">
+              <a className="navbar-brand text-light dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
                 CODING TEST
               </a>
-              <ul className="dropdown-menu" aria-labelledby="dropdownMenuLinkCoding">
+              <ul className="dropdown-menu">
                 <li><a className="dropdown-item" href="/Codingq">Add Coding Questions</a></li>
-                <li><a className="dropdown-item" href="Codingupdate">Updation</a></li>
+                <li><a className="dropdown-item" href="/Codingupdate">Updation</a></li>
                 <li><a className="dropdown-item" href="/submissionweeks">Coding Attendance</a></li>
                 <li><a className="dropdown-item" href="/pasttestcases">Add Solutions</a></li>
                 <li><a className="dropdown-item" href="/Fourweek">Result</a></li>
+                <li><a className="dropdown-item" href="/deletecode">Deletion</a></li>
               </ul>
             </div>
             <li></li>
@@ -140,7 +104,6 @@ const Adminnavbar = () => { // Correct the component declaration
             <li></li>
             <li></li>
             <li></li>
-          
 
             {/* SIGNOUT BUTTON */}
             <button onClick={handleSignOut} className="btn btn-danger mx-3">

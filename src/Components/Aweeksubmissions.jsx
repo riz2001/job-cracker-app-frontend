@@ -11,6 +11,7 @@ const AweekSubmissions = () => {
   const [error, setError] = useState(null);
   const [courseYear, setCourseYear] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
+  const [companyFilter, setCompanyFilter] = useState('');
   const [availableCourseYears, setAvailableCourseYears] = useState([
     'First Year A Batch',
     'First Year B Batch',
@@ -18,13 +19,13 @@ const AweekSubmissions = () => {
     'Second Year B Batch',
   ]);
   const [showLateSubmissionsOnly, setShowLateSubmissionsOnly] = useState(false);
-  const [filteredCount, setFilteredCount] = useState(0); // New state for filtered count
+  const [filteredCount, setFilteredCount] = useState(0);
 
   useEffect(() => {
     const fetchSubmissions = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:3030/api/submissions-and-non-submissions/${week}?courseYear=${courseYear}`
+          `http://localhost:3030/api/submissions-and-non-submissions/${week}?courseYear=${courseYear}&company=${companyFilter}`
         );
         const { submissions, nonSubmittedUsers } = response.data;
         setSubmissions(submissions);
@@ -36,39 +37,45 @@ const AweekSubmissions = () => {
     };
 
     fetchSubmissions();
-  }, [week, courseYear]);
+  }, [week, courseYear, companyFilter]);
 
-  // Filter submissions based on search term
   const filteredSubmissions = submissions.filter(submission => {
     const user = submission.userId || {};
-    return (
+    const matchesSearchTerm =
       user.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
       user.admissionno?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      user.email?.toLowerCase().includes(searchTerm.toLowerCase())
-    );
+      user.email?.toLowerCase().includes(searchTerm.toLowerCase());
+
+    return matchesSearchTerm;
   });
 
-  // Update filtered count whenever filteredSubmissions changes
   useEffect(() => {
     setFilteredCount(filteredSubmissions.length);
   }, [filteredSubmissions]);
 
-  // Determine late submissions
   const lateSubmissions = filteredSubmissions.filter(submission => {
     return new Date(submission.submissionTime) > new Date(submission.dueDate);
   });
 
-  // Filter non-submitted users based on search term
   const filteredNonSubmittedUsers = nonSubmittedUsers.filter(user => {
-    return (
+    const matchesSearchTerm =
       user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       user.admissionno.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      user.email.toLowerCase().includes(searchTerm.toLowerCase())
+      user.email.toLowerCase().includes(searchTerm.toLowerCase());
+
+    const hasNotSubmittedForSelectedCompany = !submissions.some(
+      (submission) =>
+        submission.userId?._id === user._id &&
+        submission.company === companyFilter &&
+        submission.week === week
     );
+
+    return matchesSearchTerm && hasNotSubmittedForSelectedCompany;
   });
 
-  // Determine which submissions to display
   const displaySubmissions = showLateSubmissionsOnly ? lateSubmissions : filteredSubmissions;
+
+  const uniqueCompanies = [...new Set(submissions.map(sub => sub.company))];
 
   return (
     <div>
@@ -76,56 +83,67 @@ const AweekSubmissions = () => {
 
       <div className="submissions-container">
         <h2 className="title">Submissions for Week {week}</h2>
-        
 
-        {/* Dropdown for Course Year Selection */}
-        <label htmlFor="courseYear">Select Course Year:</label>
-        <select
-          id="courseYear"
-          value={courseYear}
-          onChange={(e) => setCourseYear(e.target.value)}
-        >
-          <option value="">All Course Years</option>
-          {availableCourseYears.map((year, index) => (
-            <option key={index} value={year}>
-              {year}
-            </option>
-          ))}
-        </select>
-        &nbsp;  &nbsp;
+        <div className="filter-section">
+          {/* Dropdown for Course Year Selection */}
+          <label htmlFor="courseYear">Select Course Year:</label>
+          <select
+            id="courseYear"
+            value={courseYear}
+            onChange={(e) => {
+              setCourseYear(e.target.value);
+              setCompanyFilter('');
+            }}
+          >
+            <option value="">All Course Years</option>
+            {availableCourseYears.map((year, index) => (
+              <option key={index} value={year}>
+                {year}
+              </option>
+            ))}
+          </select>
 
-
-        {/* Search Input */}
-        <label htmlFor="searchTerm">Search:</label>
-        <input
-          id="searchTerm"
-          type="text"
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          placeholder="Enter name, admission no, or email"
-        />
-          &nbsp;  &nbsp;
-
-
-        {/* Toggle to Show Only Late Submissions */}
-        <label htmlFor="showLateSubmissionsOnly">
+          {/* Search Input */}
+          <label htmlFor="searchTerm">Search:</label>
           <input
-            type="checkbox"
-            id="showLateSubmissionsOnly"
-            checked={showLateSubmissionsOnly}
-            onChange={(e) => setShowLateSubmissionsOnly(e.target.checked)}
+            id="searchTerm"
+            type="text"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            placeholder="Enter name, admission no, or email"
           />
-          Show Only Late Submissions
-        </label>
-       
 
-      
+          {/* Dropdown for Company Filtering */}
+          <label htmlFor="companyFilter">Filter by Company:</label>
+          <select
+            id="companyFilter"
+            value={companyFilter}
+            onChange={(e) => setCompanyFilter(e.target.value)}
+          >
+            <option value="">All Companies</option>
+            {uniqueCompanies.map((company, index) => (
+              <option key={index} value={company}>
+                {company}
+              </option>
+            ))}
+          </select>
+
+          {/* Toggle to Show Only Late Submissions */}
+          <label htmlFor="showLateSubmissionsOnly">
+            <input
+              type="checkbox"
+              id="showLateSubmissionsOnly"
+              checked={showLateSubmissionsOnly}
+              onChange={(e) => setShowLateSubmissionsOnly(e.target.checked)}
+            />
+            Show Only Late Submissions
+          </label>
+        </div>
+
         {/* Displaying Submissions */}
-        <br></br>
+        <br />
         <h3>{showLateSubmissionsOnly ? 'Late Submissions' : 'Users Who Submitted'}</h3>
-          {/* Displaying Submissions Count */}
-       
-        <p>{`Number of Submitted Student: ${filteredCount}`}</p>
+        <p>{`Number of Submitted Students: ${filteredCount}`}</p>
 
         {displaySubmissions.length ? (
           <table className="submissions-table">
@@ -136,6 +154,7 @@ const AweekSubmissions = () => {
                 <th>ROLL NO</th>
                 <th>COURSE YEAR</th>
                 <th>EMAIL</th>
+                <th>COMPANY</th>
                 <th>SCORE</th>
                 <th>SUBMISSION TIME</th>
                 <th>STATUS</th>
@@ -151,9 +170,10 @@ const AweekSubmissions = () => {
                     <td>{submission.userId ? submission.userId.rollno : 'N/A'}</td>
                     <td>{submission.userId ? submission.userId.courseYear : 'N/A'}</td>
                     <td>{submission.userId ? submission.userId.email : 'N/A'}</td>
+                    <td>{submission.company || 'N/A'}</td>
                     <td>{submission.score}</td>
                     <td>{new Date(submission.submissionTime).toLocaleString()}</td>
-                    <td style={{ color: isLate ? 'red' : 'black' }}>{isLate ? 'Late' : 'On Time'}</td>
+                    <td style={{ color: isLate ? 'red' : 'green' }}>{isLate ? 'Late' : 'On Time'}</td>
                   </tr>
                 );
               })}
@@ -162,12 +182,12 @@ const AweekSubmissions = () => {
         ) : (
           <p>No submissions available for this week.</p>
         )}
-           <br></br>
+        <br />
 
         {/* Conditional Rendering for Users Who Did Not Submit */}
         {!showLateSubmissionsOnly && (
           <>
-            <h3>Users Who Did Not Submit</h3>
+            <h3>Users Who Did Not Submit for {companyFilter} in Week {week}</h3>
             {filteredNonSubmittedUsers.length ? (
               <table className="submissions-table">
                 <thead>
@@ -192,67 +212,53 @@ const AweekSubmissions = () => {
                 </tbody>
               </table>
             ) : (
-              <p>All users have submitted the quiz.</p>
+              <p>All users have submitted the quiz for {companyFilter} in Week {week}.</p>
             )}
           </>
         )}
 
-        {/* Inline CSS */}
-        <style jsx>{`
-          .submissions-container {
-            width: 80%;
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 20px;
-            background-color: #ffffff;
-            border-radius: 8px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-          }
+<style jsx>{`
+  .submissions-container {
+    width: 80%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #ffffff;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+  }
+  .filter-section {
+    margin-bottom: 20px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    align-items: center;
+  }
+  .submissions-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+  }
+  .submissions-table th,
+  .submissions-table td {
+    padding: 10px;
+    text-align: left;
+    border: 1px solid #dddddd;
+  }
+  .submissions-table th {
+    background-color: #007bff; /* Blue background for table headers */
+    color: white; /* White text color for better contrast */
+  }
+  .submissions-table td {
+    background-color: #f9f9f9; /* Light grey for table cells */
+  }
+  .title {
+    text-align: center;
+    margin-bottom: 20px;
+  }
+`}</style>
 
-          .title {
-            font-size: 24px;
-            color: #333;
-            margin-bottom: 20px;
-            text-align: center;
-          }
-
-          .submissions-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-          }
-
-          .submissions-table th,
-          .submissions-table td {
-            padding: 12px;
-            text-align: left;
-            border: 1px solid #ddd;
-          }
-
-          .submissions-table th {
-            background-color: #007bff;
-            color: #ffffff;
-            font-size: 18px;
-          }
-
-          .submissions-table tr:nth-child(even) {
-            background-color: #f9f9f9;
-          }
-
-          .submissions-table tr:hover {
-            background-color: #f1f1f1;
-          }
-
-          .submissions-table td {
-            font-size: 14px;
-          }
-
-          .error {
-            text-align: center;
-            font-size: 18px;
-            color: #ff0000;
-          }
-        `}</style>
+      
       </div>
     </div>
   );

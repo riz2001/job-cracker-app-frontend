@@ -6,17 +6,19 @@ import Adminnavbar from './Adminnavbar';
 function Passedtestcass() {
     const [week, setWeek] = useState('');
     const [submissions, setSubmissions] = useState([]);
-    const [weeks, setWeeks] = useState([]); // Store available weeks
+    const [weeks, setWeeks] = useState([]);
+    const [companyFilter, setCompanyFilter] = useState(''); // State to store selected company
+    const [companies, setCompanies] = useState([]); // State to store unique companies for filter
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
-    const navigate = useNavigate(); // For page navigation
+    const navigate = useNavigate();
 
     // Fetch available weeks on component mount
     useEffect(() => {
         const fetchWeeks = async () => {
             try {
                 const res = await axios.get('http://localhost:3030/api/compiler/weeks');
-                setWeeks(res.data); // Store weeks
+                setWeeks(res.data);
             } catch (err) {
                 console.error('Error fetching weeks:', err);
                 setError('Error fetching weeks. Please try again.');
@@ -26,13 +28,20 @@ function Passedtestcass() {
         fetchWeeks();
     }, []);
 
-    // Clear submissions when the week changes
+    // Fetch available companies after submissions are fetched
     useEffect(() => {
-        setSubmissions([]); // Clear previous submissions
-    }, [week]);
+        if (submissions.length > 0) {
+            const uniqueCompanies = [...new Set(submissions.map(submission => submission.company))];
+            setCompanies(uniqueCompanies);
+        }
+    }, [submissions]);
 
     const handleWeekChange = (e) => {
         setWeek(e.target.value);
+    };
+
+    const handleCompanyChange = (e) => {
+        setCompanyFilter(e.target.value);
     };
 
     const fetchPassedCodes = async () => {
@@ -42,7 +51,7 @@ function Passedtestcass() {
         }
 
         setLoading(true);
-        setError(null); // Reset error before fetching
+        setError(null);
 
         try {
             const res = await axios.get(`http://localhost:3030/api/compiler/week/${week}`);
@@ -63,7 +72,8 @@ function Passedtestcass() {
                 code: submission.code,
                 passedCount: submission.passedCount,
                 totalTestCases: submission.totalTestCases,
-                questionTitle: submission.questionTitle,
+                questionTitle: submission.questionId.title,
+                company: submission.company
             });
             alert('Data saved successfully');
         } catch (err) {
@@ -72,17 +82,21 @@ function Passedtestcass() {
         }
     };
 
-    // Navigate to the Add Answers page
     const handleAddAnswers = () => {
         navigate('/addanswers');
     };
 
+    // Filtered submissions based on the selected company
+    const filteredSubmissions = companyFilter 
+        ? submissions.filter(submission => submission.company === companyFilter) 
+        : submissions;
+
     return (
         <div>
-            <Adminnavbar/>
+            <Adminnavbar />
 
             <div style={styles.container}>
-                <h2 style={styles.header}><center><b>SUBMIT SOLUTIONS</b></center></h2> {/* Centered heading */}
+                <h2 style={styles.header}><center><b>SUBMIT SOLUTIONS</b></center></h2>
                 
                 <div style={styles.weekSelector}>
                     <label>Select Week:</label>
@@ -92,38 +106,45 @@ function Passedtestcass() {
                             <option key={weekNum} value={weekNum}>{`Week ${weekNum}`}</option>
                         ))}
                     </select>
-                    
+
                     <button onClick={fetchPassedCodes} style={styles.button} disabled={loading}>
                         {loading ? 'Loading...' : 'Fetch Passed Codes'}
                     </button>
-                    {/* Add Answers button placed in the same row */}
                     <button onClick={handleAddAnswers} style={{ ...styles.button, marginLeft: '10px' }}>
                         Add Answers
                     </button>
                 </div>
-                
-                <div style={styles.header}>
-                    {/* Display question title only if submissions are available */}
-                    {submissions.length > 0 && (
-                        <h3 style={styles.questionTitle}>{submissions[0].questionId.title}</h3>
-                    )}
-                </div>
+
+                {/* Company Filter */}
+                {companies.length > 0 && (
+                    <div style={styles.companyFilter}>
+                        <label>Select Company:</label>
+                        <select value={companyFilter} onChange={handleCompanyChange} style={styles.select}>
+                            <option value="">--All Companies--</option>
+                            {companies.map((company) => (
+                                <option key={company} value={company}>{company}</option>
+                            ))}
+                        </select>
+                    </div>
+                )}
 
                 {error && <p style={styles.error}>{error}</p>}
 
                 <div style={styles.submissionsList}>
-                    {submissions.length > 0 ? (
-                        submissions.map((submission) => (
+                    {filteredSubmissions.length > 0 ? (
+                        filteredSubmissions.map((submission) => (
                             <div key={submission._id} style={styles.submissionItem}>
+                                <p><strong>Question Title:</strong> {submission.questionId.title}</p>
+                                <p><strong>Company:</strong> {submission.company}</p>
                                 <p><strong>Code:</strong></p>
                                 <pre style={styles.code}>{submission.code}</pre>
                                 <button onClick={() => saveToDatabase(submission)} style={styles.button}>
-                                    Save to Database
+                                   SUBMIT
                                 </button>
                             </div>
                         ))
                     ) : (
-                        <p>No submissions available.</p> // Providing a message if no submissions exist
+                        <p>No submissions available.</p>
                     )}
                 </div>
             </div>
@@ -144,14 +165,15 @@ const styles = {
         boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
     },
     header: {
-        textAlign: 'center', // Center the header text
+        textAlign: 'center',
         marginBottom: '20px',
     },
-    questionTitle: {
-        textAlign: 'left', // Align question title to the left
-        marginBottom: '10px',
-    },
     weekSelector: {
+        display: 'flex',
+        alignItems: 'center',
+        marginBottom: '20px',
+    },
+    companyFilter: {
         display: 'flex',
         alignItems: 'center',
         marginBottom: '20px',
@@ -177,8 +199,8 @@ const styles = {
         padding: '15px',
         borderRadius: '5px',
         marginBottom: '10px',
-        boxShadow: '0 2px 4px rgba(0, 0, 0, 0.2)', // Increased shadow for better card effect
-        border: '2px solid #007bff', // Thicker border for card view
+        boxShadow: '0 2px 4px rgba(0, 0, 0, 0.2)',
+        border: '2px solid #007bff',
     },
     error: {
         color: 'red',

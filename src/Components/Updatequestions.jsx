@@ -4,28 +4,35 @@ import Adminnavbar from './Adminnavbar';
 
 const UpdateQuestions = () => {
   const [week, setWeek] = useState('');
+  const [company, setCompany] = useState('');
   const [weeks, setWeeks] = useState([]);
+  const [companies, setCompanies] = useState([]);
   const [questions, setQuestions] = useState([]);
   const [isUpdated, setIsUpdated] = useState(false);
 
-  // Fetch available weeks
-  const fetchAvailableWeeks = async () => {
+  // Fetch available weeks and companies
+  const fetchAvailableFilters = async () => {
     try {
-      const response = await axios.get('http://localhost:3030/api/available-weekss');
-      setWeeks(response.data);
+      const weekResponse = await axios.get('http://localhost:3030/api/available-weekss');
+      setWeeks(weekResponse.data);
+
+      const companyResponse = await axios.get('http://localhost:3030/companies');
+      setCompanies(companyResponse.data);
     } catch (error) {
-      console.error('Error fetching weeks:', error);
+      console.error('Error fetching weeks or companies:', error);
     }
   };
 
-  // Fetch questions by week
-  const fetchQuestions = async (selectedWeek) => {
+  // Fetch questions by week and company
+  const fetchQuestions = async () => {
     try {
-      const response = await axios.get(`http://localhost:3030/api/filter-questions/${selectedWeek}`);
+      const response = await axios.get('http://localhost:3030/api/filter-questions', {
+        params: { week, company },
+      });
       setQuestions(response.data);
     } catch (error) {
       console.error('Error fetching questions:', error);
-      alert('Error fetching questions.');
+      alert('NO QUESTIONS');
     }
   };
 
@@ -33,13 +40,17 @@ const UpdateQuestions = () => {
   const handleWeekChange = (e) => {
     const selectedWeek = e.target.value;
     setWeek(selectedWeek);
-    if (selectedWeek) {
-      fetchQuestions(selectedWeek);
-      setIsUpdated(false);
-    }
+    setIsUpdated(false);
   };
 
-  // Handle change of answers, explanations, and options
+  // Handle company change
+  const handleCompanyChange = (e) => {
+    const selectedCompany = e.target.value;
+    setCompany(selectedCompany);
+    setIsUpdated(false);
+  };
+
+  // Handle change of question fields
   const handleInputChange = (index, field, value) => {
     const updatedQuestions = [...questions];
     updatedQuestions[index][field] = value;
@@ -56,7 +67,7 @@ const UpdateQuestions = () => {
   // Add new option
   const addOption = (questionIndex) => {
     const updatedQuestions = [...questions];
-    updatedQuestions[questionIndex].options.push(''); // Add empty option
+    updatedQuestions[questionIndex].options.push('');
     setQuestions(updatedQuestions);
   };
 
@@ -70,7 +81,7 @@ const UpdateQuestions = () => {
   // Update questions in the database
   const handleUpdate = async () => {
     try {
-      await axios.put('http://localhost:3030/api/update-questions', { questions });
+      await axios.put('http://localhost:3030/api/update-questionss', { questions });
       alert('Questions updated successfully!');
       setIsUpdated(true);
     } catch (error) {
@@ -80,8 +91,14 @@ const UpdateQuestions = () => {
   };
 
   useEffect(() => {
-    fetchAvailableWeeks();
+    fetchAvailableFilters();
   }, []);
+
+  useEffect(() => {
+    if (week && company) {
+      fetchQuestions();
+    }
+  }, [week, company]);
 
   return (
     <div>
@@ -101,9 +118,15 @@ const UpdateQuestions = () => {
           </select>
         </label>
 
-        <button className="update-button" onClick={handleUpdate} disabled={!week || isUpdated}>
-          Update Questions
-        </button>
+        <label htmlFor="companySelect">
+          Company:
+          <select id="companySelect" value={company} onChange={handleCompanyChange} required>
+            <option value="" disabled>Select a company</option>
+            {companies.map((company, index) => (
+              <option key={index} value={company}>{company}</option>
+            ))}
+          </select>
+        </label>
 
         <div className="questions-container">
           {questions.length > 0 ? (
@@ -114,7 +137,7 @@ const UpdateQuestions = () => {
                   value={question.question}
                   onChange={(e) => handleInputChange(index, 'question', e.target.value)}
                   placeholder="Edit question text"
-                  rows="6" // Increased number of rows for better visibility
+                  rows="6"
                   className="question-input"
                 />
                 
@@ -134,7 +157,7 @@ const UpdateQuestions = () => {
                       </button>
                     </div>
                   ))}
-       <button onClick={() => addOption(index)} className="add-option">
+                  <button onClick={() => addOption(index)} className="add-option">
                     Add Option
                   </button>
                 </div>
@@ -156,121 +179,98 @@ const UpdateQuestions = () => {
                     value={question.explanation}
                     onChange={(e) => handleInputChange(index, 'explanation', e.target.value)}
                     placeholder="Edit explanation"
-                    rows="4" // Increase rows to match options field
+                    rows="4"
                     className="explanation-input"
                   />
                 </div>
               </div>
             ))
           ) : (
-            <p>No questions found for this week.</p>
+            <p>No questions found for this week and company.</p>
           )}
         </div>
 
+        <button className="update-button" onClick={handleUpdate} disabled={!week || !company || isUpdated}>
+          Update Questions
+        </button>
+
         <style jsx>{`
           .update-container {
-            max-width: 1000px;
+            width: 80%;
             margin: 0 auto;
-            padding: 30px;
-            background-color: #ffffff;
-            border-radius: 12px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+            padding: 20px;
           }
-
           .header {
             text-align: center;
-            color: #4CAF50;
+            font-size: 24px;
             margin-bottom: 20px;
-            font-size: 28px;
           }
-
           label {
+            display: block;
+            margin: 15px 0;
             font-weight: bold;
-            margin-right: 10px;
           }
-
-          select {
-            padding: 10px;
-            margin-bottom: 20px;
-            border-radius: 4px;
+          select, .update-button {
+            padding: 8px;
+            margin-top: 5px;
+            border-radius: 5px;
             border: 1px solid #ccc;
-            font-size: 16px;
+            width: 100%;
           }
-
           .update-button {
-            padding: 10px 20px;
-            background-color: #007bff;
-            color: #fff;
+            background-color: #4CAF50;
+            color: white;
             border: none;
-            border-radius: 4px;
             cursor: pointer;
-            font-size: 16px;
-            margin-bottom: 20px;
+            margin-top: 20px; /* Add margin to separate the button */
           }
-
           .update-button:disabled {
             background-color: #ccc;
             cursor: not-allowed;
           }
-
           .questions-container {
-            margin-top: 20px;
+            margin-top: 30px;
           }
-
           .question-card {
-            background-color: #f9f9f9;
-            border: 1px solid #ddd;
-            padding: 20px;
-            margin-bottom: 15px;
+            background: #f9f9f9;
+            padding: 15px;
+            margin-bottom: 20px;
             border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
           }
-
-          .question-input,
-          .answer-input,
-          .explanation-input {
+          .question-input, .answer-input, .explanation-input {
             width: 100%;
-            padding: 10px;
-            margin-top: 10px;
-            margin-bottom: 15px;
-            border-radius: 6px;
+            padding: 8px;
+            border-radius: 5px;
             border: 1px solid #ccc;
+            margin-top: 8px;
           }
-
+          .options-container {
+            margin-top: 15px;
+          }
           .option-container {
             display: flex;
             align-items: center;
             margin-top: 5px;
           }
-
           .option-input {
             flex: 1;
-            padding: 10px;
-            border-radius: 6px;
+            padding: 6px;
+            border-radius: 5px;
             border: 1px solid #ccc;
-            margin-right: 10px;
           }
-
-          .remove-option {
-            padding: 5px 10px;
-            background-color: #ff4d4d;
-            color: #fff;
+          .add-option, .remove-option {
+            background-color: #d9534f;
+            color: white;
             border: none;
-            border-radius: 4px;
+            padding: 5px 10px;
             cursor: pointer;
+            margin-left: 10px;
+            border-radius: 5px;
           }
-
           .add-option {
-            padding: 5px 10px;
-            background-color: #28a745;
-            color: #fff;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
+            background-color: #5bc0de;
             margin-top: 10px;
-          }
-
-          h3 {
-            margin-bottom: 10px;
           }
         `}</style>
       </div>

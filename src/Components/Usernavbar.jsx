@@ -81,7 +81,7 @@ const Usernavbar = () => {
           
 
           <a className="navbar-brand text-light ms-3" href="/"><b>USER SIGNIN</b></a>
-          <a className="navbar-brand text-light ms-3" href="/AdminSignIn"><b>ADMIN SIGNIN</b></a>
+          <a className="navbar-brand text-light ms-3" href="/Ureg"><b>REGISTER</b></a>
         </div>
       </div>
     </nav>

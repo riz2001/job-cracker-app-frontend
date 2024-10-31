@@ -8,6 +8,8 @@ const Aanswer = () => {
   const [weeks, setWeeks] = useState([]);
   const [questions, setQuestions] = useState([]);
   const [submitted, setSubmitted] = useState(false);
+  const [company, setCompany] = useState(''); // New state for company
+  const [companies, setCompanies] = useState([]); // State to store companies
 
   const fetchAvailableWeeks = async () => {
     try {
@@ -18,9 +20,18 @@ const Aanswer = () => {
     }
   };
 
-  const fetchQuestions = async (selectedWeek) => {
+  const fetchCompanies = async () => {
     try {
-      const response = await axios.get(`http://localhost:3030/api/filter-questions/${selectedWeek}`);
+      const response = await axios.get('http://localhost:3030/api/companies'); // Fetch companies from API
+      setCompanies(response.data);
+    } catch (error) {
+      console.error('Error fetching companies:', error);
+    }
+  };
+
+  const fetchQuestions = async (selectedWeek, selectedCompany) => {
+    try {
+      const response = await axios.get(`http://localhost:3030/api/filter-questions/${selectedWeek}/${selectedCompany}`);
       console.log('Fetched questions:', response.data);
       setQuestions(response.data);
     } catch (error) {
@@ -32,8 +43,17 @@ const Aanswer = () => {
   const handleWeekChange = (e) => {
     const selectedWeek = e.target.value;
     setWeek(selectedWeek);
-    if (selectedWeek) {
-      fetchQuestions(selectedWeek);
+    if (selectedWeek && company) {
+      fetchQuestions(selectedWeek, company);
+      setSubmitted(false);
+    }
+  };
+
+  const handleCompanyChange = (e) => {
+    const selectedCompany = e.target.value;
+    setCompany(selectedCompany);
+    if (week && selectedCompany) {
+      fetchQuestions(week, selectedCompany);
       setSubmitted(false);
     }
   };
@@ -45,6 +65,7 @@ const Aanswer = () => {
       answer: question.answer,
       explanation: question.explanation,
       submittedAt: new Date(),
+      company:question.company,
     }));
   
     try {
@@ -59,6 +80,7 @@ const Aanswer = () => {
 
   useEffect(() => {
     fetchAvailableWeeks();
+    fetchCompanies(); // Fetch companies on component mount
   }, []);
 
   return (
@@ -66,6 +88,18 @@ const Aanswer = () => {
       <Adminnavbar/>
       <div className="answer-container">
         <h2 className="header"><b>SUBMIT SOLUTIONS</b></h2>
+
+        <label htmlFor="companySelect">
+          Company:
+          <select id="companySelect" value={company} onChange={handleCompanyChange} required>
+            <option value="" disabled>Select a company</option>
+            {companies.map((company, index) => (
+              <option key={index} value={company}>
+                {company}
+              </option>
+            ))}
+          </select>
+        </label>
 
         <label htmlFor="weekSelect">
           Week:
@@ -79,7 +113,7 @@ const Aanswer = () => {
           </select>
         </label>
 
-        <button className="submit-button" onClick={handleSubmit} disabled={!week || submitted}>
+        <button className="submit-button" onClick={handleSubmit} disabled={!week || !company || submitted}>
           Submit Answers
         </button>
 
@@ -99,7 +133,7 @@ const Aanswer = () => {
               </div>
             ))
           ) : (
-            <p>No questions found for this week.</p>
+            <p>No questions found for this week and company.</p>
           )}
         </div>
 
