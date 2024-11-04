@@ -3,60 +3,64 @@ import axios from 'axios';
 import Adminnavbar from './Adminnavbar';
 
 const Codingupdate = () => {
-    const [selectedWeek, setSelectedWeek] = useState(''); // State to store the selected week number
-    const [questions, setQuestions] = useState([]); // State to store questions for the selected week
-    const [loading, setLoading] = useState(false); // State to manage loading status
-    const [successMessage, setSuccessMessage] = useState(''); // State to manage success messages
+    const [selectedWeek, setSelectedWeek] = useState('');
+    const [selectedCompany, setSelectedCompany] = useState('');
+    const [questions, setQuestions] = useState([]);
+    const [loading, setLoading] = useState(false);
+    const [successMessage, setSuccessMessage] = useState('');
+    const [uniqueCompanies, setUniqueCompanies] = useState([]); // Store unique companies
 
     // Fetch questions when a week is selected
     const handleWeekChange = (e) => {
-        setSelectedWeek(e.target.value);
-        if (e.target.value) {
-            fetchWeeklyData(e.target.value); // Fetch data for the selected week
+        const week = e.target.value;
+        setSelectedWeek(week);
+        if (week) {
+            fetchWeeklyData(week);
         }
     };
 
-    // Fetch data for the selected week
+    // Fetch data for the selected week and filter companies
     const fetchWeeklyData = (week) => {
-        setLoading(true); // Set loading to true
+        setLoading(true);
         axios.get(`http://localhost:3030/api/cquestionss?week=${week}`)
             .then(response => {
-                setQuestions(response.data); // Set the questions from the response
-                setLoading(false); // Set loading to false
+                const data = response.data;
+                setQuestions(data);
+                const companies = [...new Set(data.map(q => q.company))];
+                setUniqueCompanies(companies);
+                setLoading(false);
             })
             .catch(error => {
                 console.error('Error fetching weekly data:', error);
-                setLoading(false); // Set loading to false on error
+                setLoading(false);
             });
     };
 
-    // Handle change in input fields for editing
+    // Handle input changes for editing fields
     const handleInputChange = (index, e) => {
         const { name, value } = e.target;
         const updatedQuestions = [...questions];
-        updatedQuestions[index] = { ...updatedQuestions[index], [name]: value }; // Update specific question
-        setQuestions(updatedQuestions); // Update state with the modified questions
+        updatedQuestions[index] = { ...updatedQuestions[index], [name]: value };
+        setQuestions(updatedQuestions);
     };
 
-    // Handle change in test case inputs
+    // Handle test case input changes
     const handleTestCaseChange = (questionIndex, testCaseIndex, e) => {
         const { name, value } = e.target;
         const updatedQuestions = [...questions];
-        const updatedTestCases = [...updatedQuestions[questionIndex].testCases];
-        updatedTestCases[testCaseIndex] = {
-            ...updatedTestCases[testCaseIndex],
+        updatedQuestions[questionIndex].testCases[testCaseIndex] = {
+            ...updatedQuestions[questionIndex].testCases[testCaseIndex],
             [name]: value,
         };
-        updatedQuestions[questionIndex].testCases = updatedTestCases;
-        setQuestions(updatedQuestions); // Update state with the modified questions
+        setQuestions(updatedQuestions);
     };
 
     // Add a new test case
     const addTestCase = (index) => {
         const newTestCase = { input: '', expectedOutput: '' };
         const updatedQuestions = [...questions];
-        updatedQuestions[index].testCases.push(newTestCase); // Add new test case to the specific question
-        setQuestions(updatedQuestions); // Update state with the modified questions
+        updatedQuestions[index].testCases.push(newTestCase);
+        setQuestions(updatedQuestions);
     };
 
     // Update the question in the database
@@ -64,25 +68,29 @@ const Codingupdate = () => {
         const questionToUpdate = questions[index];
         axios.put(`http://localhost:3030/api/cquestionss/${questionId}`, questionToUpdate)
             .then(() => {
-                // Fetch updated data after the update
                 fetchWeeklyData(selectedWeek);
                 setSuccessMessage('Question updated successfully!');
-                alert('Question updated successfully!') // Set success message
-                setTimeout(() => setSuccessMessage(''), 3000); // Clear success message after 3 seconds
+                alert('Question updated successfully!')
+                setTimeout(() => setSuccessMessage(''), 3000);
             })
             .catch(error => {
                 console.error('Error updating question:', error);
             });
     };
 
+    // Filter questions by selected company
+    const filteredQuestions = selectedCompany 
+        ? questions.filter(q => q.company === selectedCompany) 
+        : questions;
+
     return (
         <div>
             <Adminnavbar />
-            <div className="update-container" style={styles.container}>
-                <h1 className="form-title" style={styles.title}>Update Coding Questions</h1>
-                
+            <div style={styles.container}>
+                <h1 style={styles.title}>Update Coding Questions</h1>
+
                 {/* Week Selection */}
-                <div className="week-selection" style={styles.weekSelection}>
+                <div style={styles.weekSelection}>
                     <label style={styles.label}>Select Week:</label>
                     <input
                         type="number"
@@ -93,13 +101,30 @@ const Codingupdate = () => {
                     />
                 </div>
 
+                {/* Company Filter */}
+                {uniqueCompanies.length > 0 && (
+                    <div style={styles.weekSelection}>
+                        <label style={styles.label}>Filter by Company:</label>
+                        <select
+                            value={selectedCompany}
+                            onChange={(e) => setSelectedCompany(e.target.value)}
+                            style={styles.input}
+                        >
+                            <option value="">All Companies</option>
+                            {uniqueCompanies.map((company, idx) => (
+                                <option key={idx} value={company}>{company}</option>
+                            ))}
+                        </select>
+                    </div>
+                )}
+
                 {loading ? (
                     <p style={styles.loading}>Loading...</p>
                 ) : (
-                    questions.length > 0 ? (
-                        questions.map((question, index) => (
-                            <div key={question._id} className="question-details" style={styles.questionContainer}>
-                                {/* Directly displaying input fields for editing */}
+                    filteredQuestions.length > 0 ? (
+                        filteredQuestions.map((question, index) => (
+                            <div key={question._id} style={styles.questionContainer}>
+                                {question.company && <h3 style={styles.companyHeading}>{question.company}</h3>}
                                 <label style={styles.descriptionLabel}>Title:</label>
                                 <input
                                     type="text"
@@ -139,32 +164,37 @@ const Codingupdate = () => {
                                     style={styles.editInput}
                                 />
 
-                                {/* Test Cases Section */}
+                                {/* Test Cases */}
                                 <h3>Test Cases</h3>
                                 {question.testCases.map((testCase, testCaseIndex) => (
-                                    <div key={testCaseIndex} className="test-case-container" style={styles.testCaseContainer}>
-                                        <input 
-                                            type="text" 
-                                            name="input" 
-                                            placeholder="Input" 
-                                            value={testCase.input} 
-                                            onChange={(e) => handleTestCaseChange(index, testCaseIndex, e)} 
+                                    <div key={testCaseIndex} style={styles.testCaseContainer}>
+                                        <textarea
+                                            name="input"
+                                            placeholder="Input"
+                                            value={testCase.input}
+                                            onChange={(e) => handleTestCaseChange(index, testCaseIndex, e)}
                                             style={styles.input}
                                         />
-                                        <input 
-                                            type="text" 
-                                            name="expectedOutput" 
-                                            placeholder="Expected Output" 
-                                            value={testCase.expectedOutput} 
-                                            onChange={(e) => handleTestCaseChange(index, testCaseIndex, e)} 
+                                        <textarea
+                                            name="expectedOutput"
+                                            placeholder="Expected Output"
+                                            value={testCase.expectedOutput}
+                                            onChange={(e) => handleTestCaseChange(index, testCaseIndex, e)}
                                             style={styles.input}
                                         />
                                     </div>
                                 ))}
-                                <button type="button" className="add-test-case-button" onClick={() => addTestCase(index)} style={styles.addButton}>
+                                <button
+                                    type="button"
+                                    onClick={() => addTestCase(index)}
+                                    style={styles.addButton}
+                                >
                                     Add Test Case
                                 </button>
-                                <button onClick={() => updateQuestion(question._id, index)} style={styles.updateButton}>
+                                <button
+                                    onClick={() => updateQuestion(question._id, index)}
+                                    style={styles.updateButton}
+                                >
                                     Update
                                 </button>
                             </div>
@@ -174,14 +204,13 @@ const Codingupdate = () => {
                     )
                 )}
 
-                {/* Success Alert */}
                 {successMessage && <div style={styles.alert}>{successMessage}</div>}
             </div>
         </div>
     );
 };
 
-// Inline styles reflecting UpdateQuestions style
+// Inline styles for the component
 const styles = {
     container: {
         maxWidth: '800px',
@@ -273,6 +302,12 @@ const styles = {
         fontSize: '16px',
         color: 'green',
         marginTop: '20px',
+    },
+    companyHeading: {
+        fontSize: '18px',
+        color: '#007bff',
+        fontWeight: 'bold',
+        textAlign: 'center',
     },
 };
 

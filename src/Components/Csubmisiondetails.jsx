@@ -162,7 +162,7 @@ const AweekSubmissions = () => {
             </thead>
             <tbody>
               {displaySubmissions.map((submission) => {
-                const isLate = new Date(submission.submissionTime) > new Date(submission.dueDate);
+                const isLate = new Date(submission.submissionDate) > new Date(submission.dueDate);
                 return (
                   <tr key={submission._id}>
                     <td>{submission.userId ? submission.userId.name : 'Unknown User'}</td>

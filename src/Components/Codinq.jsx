@@ -116,7 +116,7 @@ const Codingq = () => {
                     <h3>Test Cases</h3>
                     {question.testCases.map((testCase, index) => (
                         <div key={index} className="test-case-container" style={styles.testCaseContainer}>
-                            <input
+                            <textarea
                                 type="text"
                                 name="input"
                                 placeholder="Input"

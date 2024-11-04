@@ -4,16 +4,31 @@ import Adminnavbar from './Adminnavbar';
 
 const Deletecode = () => {
   const [entries, setEntries] = useState([]);
+  const [filteredEntries, setFilteredEntries] = useState([]);
   const [error, setError] = useState(null);
+  const [selectedCompany, setSelectedCompany] = useState(''); // State for selected company
+  const [companies, setCompanies] = useState([]); // State for unique companies
 
   useEffect(() => {
     fetchEntries();
   }, []);
 
+  useEffect(() => {
+    // Update filtered entries whenever entries or selectedCompany changes
+    if (selectedCompany) {
+      setFilteredEntries(entries.filter(entry => entry.company === selectedCompany));
+    } else {
+      setFilteredEntries(entries);
+    }
+  }, [entries, selectedCompany]);
+
   const fetchEntries = async () => {
     try {
       const response = await axios.get('http://localhost:3030/api/quizzes');
       setEntries(response.data);
+      // Extract unique companies for filtering
+      const uniqueCompanies = [...new Set(response.data.map(entry => entry.company))];
+      setCompanies(uniqueCompanies);
     } catch (error) {
       console.error('Error fetching entries:', error);
       setError('Error fetching entries');
@@ -48,10 +63,23 @@ const Deletecode = () => {
 
   return (
     <div>
-        <Adminnavbar/>
-      <h2><center><b>Delete code</b></center></h2>
+      <Adminnavbar/>
+      <h2><center><b>Delete Code</b></center></h2>
+
       {error && <p>{error}</p>}
-      {entries.length > 0 ? (
+
+      {/* Company Filter Dropdown */}
+      <div>
+        <label>Select Company:</label>
+        <select value={selectedCompany} onChange={(e) => setSelectedCompany(e.target.value)} style={{ marginBottom: '20px' }}>
+          <option value="">--All Companies--</option>
+          {companies.map((company) => (
+            <option key={company} value={company}>{company}</option>
+          ))}
+        </select>
+      </div>
+
+      {filteredEntries.length > 0 ? (
         <table className="entry-table">
           <thead>
             <tr>
@@ -62,7 +90,7 @@ const Deletecode = () => {
             </tr>
           </thead>
           <tbody>
-            {entries.map((entry, index) => (
+            {filteredEntries.map((entry, index) => (
               <tr key={index}>
                 <td>{entry.company}</td>
                 <td>{entry.week}</td>

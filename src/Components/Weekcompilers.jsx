@@ -27,7 +27,7 @@ function Weekcompilers() {
         <div>
             <Adminnavbar/>
             <div style={styles.app}>
-                <h1 style={styles.title}>All Weeks Compiler Submissions</h1>
+                <h1 style={styles.title}>All Weeks Coding Submissions</h1>
                 {weeks.length === 0 ? (
                     <p>No submissions found.</p>
                 ) : (

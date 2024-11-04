@@ -41,6 +41,7 @@ const UpdateQuestions = () => {
     const selectedWeek = e.target.value;
     setWeek(selectedWeek);
     setIsUpdated(false);
+    setQuestions([]); 
   };
 
   // Handle company change
@@ -48,6 +49,7 @@ const UpdateQuestions = () => {
     const selectedCompany = e.target.value;
     setCompany(selectedCompany);
     setIsUpdated(false);
+    setQuestions([]); 
   };
 
   // Handle change of question fields

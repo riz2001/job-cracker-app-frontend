@@ -113,7 +113,7 @@ const Ureg = () => {
 
   const validateInputs = () => {
     const phoneRegex = /^\d{10}$/;
-    const admissionRegex = /^[A-Za-z0-9]{7}$/;  // Allows exactly 7 alphanumeric characters
+    const admissionRegex = /^[A-Za-z0-9]{8}$/;  // Allows exactly 7 alphanumeric characters
     const rollRegex = /^\d{1,3}$/;
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -122,11 +122,11 @@ const Ureg = () => {
       return false;
     }
     if (!admissionRegex.test(input.admissionno)) {
-      alert("Admission number must be 7 characters.");
+      alert("invalid Admission number.");
       return false;
     }
     if (!phoneRegex.test(input.phoneno)) {
-      alert("Phone number must be 10 digits.");
+      alert("inefficient Phone number.");
       return false;
     }
     if (!rollRegex.test(input.rollno)) {

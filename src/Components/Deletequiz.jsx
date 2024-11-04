@@ -4,6 +4,8 @@ import Adminnavbar from './Adminnavbar';
 
 const Deletequiz = () => {
   const [uniqueQuizzes, setUniqueQuizzes] = useState([]);
+  const [companies, setCompanies] = useState([]);
+  const [selectedCompany, setSelectedCompany] = useState('');
   const [error, setError] = useState(null);
 
   useEffect(() => {
@@ -11,6 +13,10 @@ const Deletequiz = () => {
       try {
         const response = await axios.get('http://localhost:3030/api/unique-quizzes');
         setUniqueQuizzes(response.data);
+
+        // Extract unique companies from the quizzes
+        const uniqueCompanies = [...new Set(response.data.map(quiz => quiz.company))];
+        setCompanies(uniqueCompanies);
       } catch (error) {
         console.error('Error fetching unique quizzes:', error);
         setError('Error fetching unique quizzes');
@@ -29,7 +35,6 @@ const Deletequiz = () => {
       alert('Error deleting quiz and answers');
     }
   };
-  
 
   const handleDeleteSubmissionsOnly = async (company, week) => {
     try {
@@ -41,12 +46,31 @@ const Deletequiz = () => {
     }
   };
 
+  // Filter quizzes based on selected company
+  const filteredQuizzes = uniqueQuizzes.filter(quiz => 
+    selectedCompany ? quiz.company === selectedCompany : true
+  );
+
   return (
     <div>
-      <Adminnavbar/>
-      <h2><b><center>Delete Quiz </center></b></h2>
+      <Adminnavbar />
+      <h2><b><center>Delete Quiz</center></b></h2>
       {error && <p>{error}</p>}
-      {uniqueQuizzes.length > 0 ? (
+      
+      <label htmlFor="company-filter">Filter by Company: </label>
+      <select 
+        id="company-filter" 
+        value={selectedCompany} 
+        onChange={(e) => setSelectedCompany(e.target.value)} 
+        style={{ marginBottom: '20px', padding: '8px' }}
+      >
+        <option value="">All Companies</option>
+        {companies.map((company, index) => (
+          <option key={index} value={company}>{company}</option>
+        ))}
+      </select>
+
+      {filteredQuizzes.length > 0 ? (
         <table className="quiz-table">
           <thead>
             <tr>
@@ -57,7 +81,7 @@ const Deletequiz = () => {
             </tr>
           </thead>
           <tbody>
-            {uniqueQuizzes.map((quiz, index) => (
+            {filteredQuizzes.map((quiz, index) => (
               <tr key={index}>
                 <td>{quiz.company}</td>
                 <td>{quiz.week}</td>
@@ -70,14 +94,13 @@ const Deletequiz = () => {
                   </button>
                 </td>
                 <td>
-  <button 
-    onClick={() => handleDeleteQuizAndAnswers(quiz.company, quiz.week)} 
-    style={{ backgroundColor: 'red', color: 'white' }}
-  >
-    Delete Quiz and Answers
-  </button>
-</td>
-
+                  <button
+                    onClick={() => handleDeleteQuizAndAnswers(quiz.company, quiz.week)}
+                    style={{ backgroundColor: 'red', color: 'white' }}
+                  >
+                    Delete Quiz and Answers
+                  </button>
+                </td>
               </tr>
             ))}
           </tbody>

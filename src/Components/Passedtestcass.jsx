@@ -7,8 +7,8 @@ function Passedtestcass() {
     const [week, setWeek] = useState('');
     const [submissions, setSubmissions] = useState([]);
     const [weeks, setWeeks] = useState([]);
-    const [companyFilter, setCompanyFilter] = useState(''); // State to store selected company
-    const [companies, setCompanies] = useState([]); // State to store unique companies for filter
+    const [companyFilter, setCompanyFilter] = useState('');
+    const [companies, setCompanies] = useState([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
     const navigate = useNavigate();
@@ -38,6 +38,10 @@ function Passedtestcass() {
 
     const handleWeekChange = (e) => {
         setWeek(e.target.value);
+        setSubmissions([]);        // Clear previous submissions
+        setCompanyFilter('');       // Reset company filter
+        setCompanies([]);           // Clear the companies list for the new week
+        setError(null);             // Clear any error messages
     };
 
     const handleCompanyChange = (e) => {
@@ -55,7 +59,8 @@ function Passedtestcass() {
 
         try {
             const res = await axios.get(`http://localhost:3030/api/compiler/week/${week}`);
-            setSubmissions(res.data);
+            const updatedSubmissions = res.data.map(submission => ({ ...submission, submitted: false }));
+            setSubmissions(updatedSubmissions);
         } catch (err) {
             console.error('Error fetching passed codes:', err);
             setError('No Code Available.');
@@ -75,7 +80,12 @@ function Passedtestcass() {
                 questionTitle: submission.questionId.title,
                 company: submission.company
             });
-            alert('Data saved successfully');
+            alert('Submitted successfully');
+            setSubmissions(prevSubmissions =>
+                prevSubmissions.map(sub =>
+                    sub._id === submission._id ? { ...sub, submitted: true } : sub
+                )
+            );
         } catch (err) {
             console.error('Error saving data:', err);
             alert('No Code Available.');
@@ -138,8 +148,12 @@ function Passedtestcass() {
                                 <p><strong>Company:</strong> {submission.company}</p>
                                 <p><strong>Code:</strong></p>
                                 <pre style={styles.code}>{submission.code}</pre>
-                                <button onClick={() => saveToDatabase(submission)} style={styles.button}>
-                                   SUBMIT
+                                <button 
+                                    onClick={() => saveToDatabase(submission)} 
+                                    style={styles.button} 
+                                    disabled={submission.submitted}
+                                >
+                                    {submission.submitted ? 'Submitted' : 'SUBMIT'}
                                 </button>
                             </div>
                         ))
